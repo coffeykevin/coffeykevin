@@ -1,0 +1,25 @@
+# BANANARC
+
+A premium reinterpretation of the 1991 QBasic classic **Gorillas**
+(`GORILLA.BAS`) for iPhone, iPad, Mac, and Apple TV — same angle-and-velocity
+soul, rebuilt with 3D assets, smooth side-on animation, an EGA-derived
+palette, and a physics overlay that visually explains every throw.
+
+## Contents
+
+| Path | What it is |
+|---|---|
+| [`docs/PRD.md`](docs/PRD.md) | Comprehensive product requirements document |
+| [`docs/BRAND.md`](docs/BRAND.md) | Name shortlist, chosen brand, voice, colors |
+| [`mockup/index.html`](mockup/index.html) | High-fidelity mockup: gameplay frame, physics overlay, art direction boards, platform layouts, brand boards |
+
+## The original
+
+- Wikipedia: <https://en.wikipedia.org/wiki/Gorillas_(video_game)>
+- Source (archival): [gist](https://gist.github.com/paulera/2525813cc3e5314c5932e1212a1d811b) ·
+  [pmachapman/basic-samples](https://github.com/pmachapman/basic-samples/blob/master/QBASIC/GORILLA.BAS) ·
+  [Internet Archive](https://archive.org/details/GorillasQbasic)
+
+This project reinterprets the mechanics (trajectory equations, gravity 9.8,
+quadratic wind drift, destructible skyline, two-number input) — it copies no
+original code, art, or the "Gorillas" name.

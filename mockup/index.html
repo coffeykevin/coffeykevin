@@ -1,0 +1,729 @@
+<title>BANANARC — Game Design & Art Direction</title>
+<style>
+  /* ============ tokens — committed single-theme "EGA night" world ============ */
+  :root {
+    --midnight: #060B2E;
+    --midnight-2: #0A1148;
+    --dos-blue: #1424C8;
+    --dos-blue-deep: #0B1156;
+    --banana: #FFD23F;
+    --banana-deep: #E0A81C;
+    --teal: #17B9B4;
+    --teal-deep: #0E7B78;
+    --brick: #C6392F;
+    --brick-deep: #8A241D;
+    --glow: #FFE9A8;
+    --slate: #9AA3B2;
+    --ink: #EAF0FF;
+    --ink-dim: #A9B4D6;
+    --line: rgba(169, 180, 214, 0.18);
+    --card: rgba(255, 255, 255, 0.04);
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --display: -apple-system, "SF Pro Display", system-ui, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  html { background: var(--midnight); }
+  body {
+    margin: 0;
+    font-family: var(--display);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 600px at 50% -200px, rgba(20, 36, 200, 0.35), transparent 70%),
+      var(--midnight);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+  h1, h2, h3 { line-height: 1.15; text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--banana);
+    margin-bottom: 14px;
+  }
+  .section-title { font-size: clamp(26px, 3.6vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .lede { color: var(--ink-dim); max-width: 62ch; font-size: 16.5px; }
+  .mono { font-family: var(--mono); }
+  a { color: var(--banana); text-decoration-color: rgba(255, 210, 63, 0.4); }
+  :focus-visible { outline: 2px solid var(--banana); outline-offset: 3px; border-radius: 4px; }
+
+  /* ============ hero ============ */
+  .hero { padding: 88px 0 64px; border-bottom: 1px solid var(--line); text-align: center; }
+  .hero .eyebrow { margin-bottom: 22px; }
+  .wordmark {
+    position: relative;
+    display: inline-block;
+    font-size: clamp(52px, 10vw, 108px);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .wordmark .arc-svg { position: absolute; left: -6%; top: -38%; width: 112%; height: 90%; overflow: visible; pointer-events: none; }
+  .tagline { margin-top: 20px; font-size: clamp(17px, 2.4vw, 22px); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+  .tagline b { color: var(--banana); font-weight: 600; }
+  .hero-sub { margin: 18px auto 0; color: var(--ink-dim); max-width: 58ch; }
+  .badge-row { margin-top: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .badge {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-dim);
+  }
+  .badge.gold { border-color: rgba(255, 210, 63, 0.5); color: var(--banana); }
+
+  /* ============ heritage ============ */
+  .heritage { display: grid; grid-template-columns: minmax(260px, 420px) 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 760px) { .heritage { grid-template-columns: 1fr; } }
+  .dos-frame {
+    background: #0000A8; border: 1px solid var(--line); border-radius: 6px; padding: 18px 16px 14px;
+    font-family: var(--mono); font-size: 12.5px; color: #A8A8A8; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .dos-frame .t { color: #FFFFFF; text-align: center; margin-bottom: 10px; }
+  .dos-frame .y { color: #FCFC54; }
+  .dos-frame .c { color: #00A8A8; }
+  .dos-frame pre { margin: 0; line-height: 1.45; overflow-x: auto; }
+  .keep-list { display: grid; gap: 14px; }
+  .keep-item { display: grid; grid-template-columns: 90px 1fr; gap: 14px; align-items: baseline; }
+  .keep-item .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .keep-item .k.kept { color: var(--teal); }
+  .keep-item .k.new { color: var(--banana); }
+  .keep-item p { color: var(--ink-dim); font-size: 15px; }
+  .keep-item p b { color: var(--ink); font-weight: 600; }
+
+  /* ============ game frame ============ */
+  .stage-outer { margin-top: 36px; }
+  .stage {
+    position: relative; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(169,180,214,0.25);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 6px rgba(255,255,255,0.02);
+    aspect-ratio: 1200 / 560;
+  }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hud { position: absolute; inset: 0; pointer-events: none; font-family: var(--mono); }
+  .chip {
+    position: absolute; display: flex; align-items: center; gap: 8px;
+    background: rgba(6, 11, 46, 0.72); border: 1px solid rgba(169,180,214,0.28);
+    border-radius: 10px; padding: 6px 12px; font-size: clamp(8px, 1.15vw, 13px);
+    backdrop-filter: blur(6px); letter-spacing: 0.06em;
+  }
+  .chip .dot { width: 0.7em; height: 0.7em; border-radius: 50%; flex: none; }
+  .pips { display: flex; gap: 4px; }
+  .pip { width: 0.55em; height: 0.55em; border-radius: 50%; border: 1px solid var(--slate); }
+  .pip.on { border-color: transparent; }
+  .p1 .dot, .p1 .pip.on { background: var(--teal); }
+  .p2 .dot, .p2 .pip.on { background: var(--brick); }
+  .chip.p1 { left: 2%; top: 4%; }
+  .chip.p2 { right: 2%; top: 4%; }
+  .chip.wind { left: 50%; transform: translateX(-50%); top: 4%; color: var(--glow); }
+  .chip.wind .arrow { letter-spacing: -0.1em; }
+  .aim-panel {
+    position: absolute; left: 2%; bottom: 4.5%;
+    background: rgba(6, 11, 46, 0.78); border: 1px solid rgba(169,180,214,0.3);
+    border-radius: 12px; padding: clamp(6px, 1.2vw, 14px) clamp(8px, 1.4vw, 16px);
+    display: flex; gap: clamp(8px, 1.6vw, 20px); align-items: center; backdrop-filter: blur(6px);
+  }
+  .readout { text-align: left; }
+  .readout .lbl { font-size: clamp(6px, 0.85vw, 10px); letter-spacing: 0.2em; color: var(--ink-dim); }
+  .readout .val { font-size: clamp(13px, 2.4vw, 27px); font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .readout .val small { font-size: 55%; color: var(--ink-dim); font-weight: 400; }
+  .readout.hot .val { color: var(--banana); }
+  .throw-btn {
+    position: absolute; right: 2%; bottom: 4.5%;
+    background: linear-gradient(180deg, var(--banana), var(--banana-deep));
+    color: #221800; font-weight: 800; font-family: var(--display);
+    letter-spacing: 0.12em; font-size: clamp(9px, 1.4vw, 16px);
+    padding: clamp(6px, 1.2vw, 14px) clamp(14px, 2.6vw, 30px); border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(255, 210, 63, 0.35);
+  }
+  .turn-banner {
+    position: absolute; left: 50%; transform: translateX(-50%); bottom: 5.5%;
+    font-size: clamp(7px, 0.95vw, 11px); letter-spacing: 0.24em; color: var(--ink-dim);
+  }
+  .annot-grid { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .annot { display: flex; gap: 12px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .annot .key { width: 12px; height: 12px; border-radius: 3px; flex: none; margin-top: 5px; }
+  .annot h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .annot p { font-size: 13.5px; color: var(--ink-dim); }
+
+  /* ============ debrief ============ */
+  .debrief-wrap { display: grid; grid-template-columns: minmax(300px, 400px) 1fr; gap: 44px; align-items: center; margin-top: 36px; }
+  @media (max-width: 760px) { .debrief-wrap { grid-template-columns: 1fr; } }
+  .debrief-card {
+    background: linear-gradient(180deg, rgba(20,36,200,0.25), rgba(6,11,46,0.9)), var(--midnight-2);
+    border: 1px solid rgba(169,180,214,0.3); border-radius: 16px; padding: 22px 22px 18px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5); font-family: var(--mono);
+  }
+  .debrief-card .hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .debrief-card .hd .who { font-size: 13px; letter-spacing: 0.18em; color: var(--teal); }
+  .debrief-card .hd .n { font-size: 11px; color: var(--ink-dim); }
+  .stat-rows { display: grid; gap: 0; }
+  .srow { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+  .srow .l { color: var(--ink-dim); }
+  .srow .v { font-variant-numeric: tabular-nums; }
+  .srow.drift { background: rgba(198, 57, 47, 0.12); margin: 6px -10px 0; padding: 10px; border: 1px solid rgba(198,57,47,0.35); border-radius: 8px; }
+  .srow.drift .l, .srow.drift .v { color: #FF9A8F; font-weight: 700; }
+  .drift-diagram { margin-top: 14px; }
+  .drift-diagram svg { width: 100%; height: auto; display: block; }
+  .debrief-copy .feature-list { margin-top: 20px; display: grid; gap: 16px; }
+  .feature-list .f h3 { font-size: 15px; margin-bottom: 3px; }
+  .feature-list .f h3 .mono-tag { font-family: var(--mono); font-size: 10px; color: var(--banana); letter-spacing: 0.14em; margin-left: 8px; }
+  .feature-list .f p { font-size: 14.5px; color: var(--ink-dim); max-width: 58ch; }
+
+  /* ============ art direction ============ */
+  .pal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-top: 32px; }
+  .pal { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+  .pal .swatches { display: grid; grid-template-columns: 1fr 1fr; height: 74px; }
+  .pal .meta { padding: 10px 12px; }
+  .pal .name { font-size: 13px; font-weight: 700; }
+  .pal .hexes { font-family: var(--mono); font-size: 10.5px; color: var(--ink-dim); margin-top: 2px; }
+  .pal-legend { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); letter-spacing: 0.12em; margin-top: 10px; }
+  .mat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 20px; }
+  .mat { border: 1px solid var(--line); border-radius: 12px; background: var(--card); overflow: hidden; }
+  .mat .chip-vis { height: 64px; }
+  .mat .body { padding: 12px 14px; }
+  .mat h3 { font-size: 14px; margin-bottom: 4px; }
+  .mat p { font-size: 13px; color: var(--ink-dim); }
+  .anim-beats { margin-top: 20px; display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .beat { display: grid; grid-template-columns: 150px 90px 1fr; gap: 16px; padding: 12px 16px; background: var(--card); border-top: 1px solid var(--line); align-items: baseline; }
+  .beat:first-child { border-top: 0; }
+  .beat .b-name { font-weight: 700; font-size: 14px; }
+  .beat .b-t { font-family: var(--mono); font-size: 12px; color: var(--banana); }
+  .beat p { font-size: 13.5px; color: var(--ink-dim); }
+  @media (max-width: 620px) { .beat { grid-template-columns: 1fr; gap: 2px; } }
+  .col2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 36px; }
+  @media (max-width: 760px) { .col2 { grid-template-columns: 1fr; } }
+  .subhead { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+  .prose { color: var(--ink-dim); font-size: 14.5px; max-width: 60ch; }
+  .prose b { color: var(--ink); }
+
+  /* ============ platforms ============ */
+  .plat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 32px; }
+  .plat { border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 16px; }
+  .plat .frame {
+    border-radius: 8px; border: 1px solid rgba(169,180,214,0.3);
+    background: linear-gradient(180deg, var(--dos-blue-deep), var(--dos-blue));
+    position: relative; overflow: hidden; margin-bottom: 12px;
+  }
+  .plat .frame::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
+    background:
+      linear-gradient(transparent, transparent),
+      conic-gradient(from 0deg, transparent, transparent);
+  }
+  .plat .sky-bldg { position: absolute; bottom: 0; }
+  .plat h3 { font-size: 15px; }
+  .plat .os { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--banana); margin-bottom: 6px; }
+  .plat p { font-size: 13px; color: var(--ink-dim); margin-top: 4px; }
+
+  /* ============ brand ============ */
+  .brand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+  @media (max-width: 700px) { .brand-grid { grid-template-columns: 1fr; } }
+  .brand-card { border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; }
+  .brand-card h3 { font-size: 13px; font-family: var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); font-weight: 400; margin-bottom: 16px; }
+  .name-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .nchip { font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-dim); }
+  .nchip.pick { background: var(--banana); color: #221800; border-color: transparent; box-shadow: 0 6px 20px rgba(255,210,63,0.3); }
+  .icon-tile {
+    width: 108px; height: 108px; border-radius: 24px; flex: none;
+    background: linear-gradient(160deg, #2137E0, #0B1156);
+    border: 1px solid rgba(169,180,214,0.3); position: relative; overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  }
+  .icon-row { display: flex; gap: 20px; align-items: center; }
+  .icon-row p { font-size: 13.5px; color: var(--ink-dim); }
+  .mini-wordmark { font-size: 34px; font-weight: 900; letter-spacing: 0.02em; position: relative; display: inline-block; }
+  .taglines { display: grid; gap: 10px; }
+  .taglines .tg { font-size: 15px; font-weight: 600; }
+  .taglines .tg small { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-dim); font-weight: 400; margin-top: 1px; }
+  .price-strip { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .price-big { font-size: 34px; font-weight: 900; color: var(--banana); font-variant-numeric: tabular-nums; }
+  .price-strip p { font-size: 13.5px; color: var(--ink-dim); max-width: 40ch; }
+
+  footer { padding: 48px 0 64px; }
+  footer p { font-size: 13px; color: var(--ink-dim); max-width: 70ch; }
+  footer .mono { font-size: 11px; letter-spacing: 0.1em; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .float-banana { animation: bob 5s ease-in-out infinite; transform-origin: center; }
+    @keyframes bob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-6px) rotate(14deg); } }
+  }
+</style>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Game pitch · Design &amp; art direction</p>
+    <div class="wordmark" aria-label="Bananarc wordmark">
+      BANANARC
+      <svg class="arc-svg" viewBox="0 0 400 120" aria-hidden="true">
+        <path d="M 20 110 Q 200 -30 380 110" fill="none" stroke="#FFD23F" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round" opacity="0.85"/>
+        <g class="float-banana" transform="translate(196, 26) rotate(24)">
+          <path d="M -14 2 Q 0 14 14 2 Q 0 6 -14 2 Z" fill="#FFD23F"/>
+          <path d="M -14 2 Q 0 10 14 2" fill="none" stroke="#E0A81C" stroke-width="1.4"/>
+        </g>
+      </svg>
+    </div>
+    <p class="tagline">Angle<b> · </b>Velocity<b> · </b>Bananas</p>
+    <p class="hero-sub">A premium 3D reinterpretation of the 1991 QBasic artillery classic — same two-number soul, rebuilt with realistic side-on animation, a physics overlay that explains every throw, and the color world of a DOS screen after dark.</p>
+    <div class="badge-row">
+      <span class="badge">iPhone</span><span class="badge">iPad</span><span class="badge">Mac</span><span class="badge">Apple&nbsp;TV</span>
+      <span class="badge gold">$4.99 · No ads · No IAP</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERITAGE ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">01 · Heritage</p>
+    <h2 class="section-title">1991, faithfully reinterpreted</h2>
+    <p class="lede">GORILLA.BAS shipped inside MS-DOS 5 as a QBasic demo and became a generation's first physics lesson. We keep its rules verbatim and rebuild everything the rules sit inside.</p>
+    <div class="heritage" style="margin-top: 36px;">
+      <div class="dos-frame" role="img" aria-label="Recreation of the original DOS input prompt">
+        <p class="t">Q B A S I C &nbsp; G O R I L L A S</p>
+        <pre>
+<span class="c">Player 1:</span> Kilo
+<span class="c">Player 2:</span> Newton
+
+<span class="y">Angle:</span> 62_
+<span class="y">Velocity:</span>
+
+gravity = 9.8
+wind = rnd(10) - 5
+x = v·cosθ·t + ½(W/5)t²
+y = v·sinθ·t − ½g·t²</pre>
+      </div>
+      <div class="keep-list">
+        <div class="keep-item"><span class="k kept">Kept</span><p><b>Angle + velocity input</b> — typed numbers remain first-class on every platform. The dial is a convenience; the numbers are the truth.</p></div>
+        <div class="keep-item"><span class="k kept">Kept</span><p><b>The exact physics</b> — gravity 9.8 default, quadratic wind drift, the original trajectory equations in a deterministic custom integrator.</p></div>
+        <div class="keep-item"><span class="k kept">Kept</span><p><b>Destructible skyline, smug sun, chest-beat victory dance</b> — the whole liturgy.</p></div>
+        <div class="keep-item"><span class="k new">New</span><p><b>3D assets, side-on camera</b> — extruded city volumes, characterful gorillas, smooth 60&nbsp;fps animation. The silhouette never stops reading as the classic.</p></div>
+        <div class="keep-item"><span class="k new">New</span><p><b>The physics overlay</b> — every throw visually explained: vector decomposition, apex, wind drift. Learning replaces dying.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GAMEPLAY MOCKUP ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">02 · Gameplay mockup</p>
+    <h2 class="section-title">The duel, mid-throw</h2>
+    <p class="lede">iPhone landscape, Kilo's turn. The launch vector and its components render live while aiming; the ghost arc hints at shape — never the landing point.</p>
+
+    <div class="stage-outer">
+      <div class="stage" role="img" aria-label="High-fidelity gameplay mockup: two gorillas on a night skyline, a banana mid-flight on a dotted arc, physics vectors at the launch point, HUD with angle and velocity readouts">
+        <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#070D3A"/>
+              <stop offset="0.55" stop-color="#12209A"/>
+              <stop offset="1" stop-color="#2136E8"/>
+            </linearGradient>
+            <linearGradient id="tealF" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#128F8B"/><stop offset="1" stop-color="#0C6663"/>
+            </linearGradient>
+            <linearGradient id="brickF" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#B23429"/><stop offset="1" stop-color="#7E1F18"/>
+            </linearGradient>
+            <linearGradient id="grayF" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#6E7891"/><stop offset="1" stop-color="#4C5570"/>
+            </linearGradient>
+            <pattern id="winA" width="22" height="26" patternUnits="userSpaceOnUse">
+              <rect x="5" y="6" width="9" height="12" rx="1" fill="#FFE9A8" opacity="0.9"/>
+            </pattern>
+            <pattern id="winB" width="22" height="26" patternUnits="userSpaceOnUse" x="11" y="13">
+              <rect x="5" y="6" width="9" height="12" rx="1" fill="#0B1156" opacity="0.55"/>
+            </pattern>
+            <radialGradient id="craterG" cx="0.4" cy="0.4" r="0.8">
+              <stop offset="0" stop-color="#1B1430"/><stop offset="0.8" stop-color="#241A3E"/><stop offset="1" stop-color="#31234F"/>
+            </radialGradient>
+            <radialGradient id="moonG" cx="0.35" cy="0.35" r="1">
+              <stop offset="0" stop-color="#F4F0E4"/><stop offset="1" stop-color="#B9B7A6"/>
+            </radialGradient>
+          </defs>
+
+          <!-- sky -->
+          <rect width="1200" height="560" fill="url(#sky)"/>
+          <g fill="#EAF0FF" opacity="0.7">
+            <circle cx="90" cy="60" r="1.6"/><circle cx="200" cy="120" r="1.1"/><circle cx="330" cy="45" r="1.4"/>
+            <circle cx="760" cy="55" r="1.2"/><circle cx="905" cy="95" r="1.6"/><circle cx="1080" cy="50" r="1.2"/>
+            <circle cx="1150" cy="130" r="1.4"/><circle cx="480" cy="35" r="1.1"/><circle cx="60" cy="170" r="1.1"/>
+          </g>
+          <circle cx="1085" cy="88" r="26" fill="url(#moonG)" opacity="0.9"/>
+          <circle cx="1076" cy="82" r="5" fill="#A5A392" opacity="0.5"/><circle cx="1093" cy="95" r="3.4" fill="#A5A392" opacity="0.4"/>
+
+          <!-- sun (shocked — banana is airborne) -->
+          <g transform="translate(600, 84)">
+            <g stroke="#FFD23F" stroke-width="3" stroke-linecap="round" opacity="0.9">
+              <line x1="-46" y1="0" x2="-36" y2="0"/><line x1="46" y1="0" x2="36" y2="0"/>
+              <line x1="0" y1="-46" x2="0" y2="-36"/><line x1="0" y1="46" x2="0" y2="36"/>
+              <line x1="-33" y1="-33" x2="-26" y2="-26"/><line x1="33" y1="-33" x2="26" y2="-26"/>
+              <line x1="-33" y1="33" x2="-26" y2="26"/><line x1="33" y1="33" x2="26" y2="26"/>
+            </g>
+            <circle r="28" fill="#FFD23F"/>
+            <circle r="28" fill="none" stroke="#E0A81C" stroke-width="1.6"/>
+            <circle cx="-9" cy="-6" r="3.4" fill="#221800"/><circle cx="9" cy="-6" r="3.4" fill="#221800"/>
+            <ellipse cx="0" cy="9" rx="6.4" ry="8" fill="#221800"/>
+          </g>
+
+          <!-- ===== skyline (front face + lit top + shadow side = extruded 3D) ===== -->
+          <!-- B1 teal -->
+          <g>
+            <polygon points="10,330 140,330 152,320 22,320" fill="#2BD0CA" opacity="0.9"/>
+            <polygon points="140,330 152,320 152,552 140,560" fill="#084A48"/>
+            <rect x="10" y="330" width="130" height="230" fill="url(#tealF)"/>
+            <rect x="10" y="330" width="130" height="230" fill="url(#winA)"/><rect x="10" y="330" width="130" height="230" fill="url(#winB)"/>
+          </g>
+          <!-- B2 gray — Kilo's rooftop -->
+          <g>
+            <polygon points="150,250 260,250 272,240 162,240" fill="#98A2BC" opacity="0.95"/>
+            <polygon points="260,250 272,240 272,552 260,560" fill="#2E3448"/>
+            <rect x="150" y="250" width="110" height="310" fill="url(#grayF)"/>
+            <rect x="150" y="250" width="110" height="310" fill="url(#winA)"/><rect x="150" y="250" width="110" height="310" fill="url(#winB)"/>
+          </g>
+          <!-- B3 brick -->
+          <g>
+            <polygon points="282,360 432,360 444,350 294,350" fill="#E06A5C" opacity="0.9"/>
+            <polygon points="432,360 444,350 444,552 432,560" fill="#5A150F"/>
+            <rect x="282" y="360" width="150" height="200" fill="url(#brickF)"/>
+            <rect x="282" y="360" width="150" height="200" fill="url(#winA)"/><rect x="282" y="360" width="150" height="200" fill="url(#winB)"/>
+          </g>
+          <!-- B4 teal with persistent crater -->
+          <g>
+            <polygon points="452,280 572,280 584,270 464,270" fill="#2BD0CA" opacity="0.9"/>
+            <polygon points="572,280 584,270 584,552 572,560" fill="#084A48"/>
+            <rect x="452" y="280" width="120" height="280" fill="url(#tealF)"/>
+            <rect x="452" y="280" width="120" height="280" fill="url(#winA)"/><rect x="452" y="280" width="120" height="280" fill="url(#winB)"/>
+            <g>
+              <circle cx="560" cy="352" r="34" fill="url(#craterG)"/>
+              <circle cx="536" cy="338" r="16" fill="url(#craterG)"/>
+              <circle cx="578" cy="372" r="18" fill="url(#craterG)"/>
+              <path d="M 528 326 A 36 36 0 0 1 588 346" fill="none" stroke="#FFB88C" stroke-width="2" opacity="0.35"/>
+              <rect x="546" y="344" width="14" height="3" fill="#FFE9A8" opacity="0.35"/>
+              <rect x="562" y="356" width="10" height="3" fill="#FFE9A8" opacity="0.25"/>
+            </g>
+          </g>
+          <!-- B5 gray -->
+          <g>
+            <polygon points="592,380 732,380 744,370 604,370" fill="#98A2BC" opacity="0.95"/>
+            <polygon points="732,380 744,370 744,552 732,560" fill="#2E3448"/>
+            <rect x="592" y="380" width="140" height="180" fill="url(#grayF)"/>
+            <rect x="592" y="380" width="140" height="180" fill="url(#winA)"/><rect x="592" y="380" width="140" height="180" fill="url(#winB)"/>
+          </g>
+          <!-- B6 brick tall -->
+          <g>
+            <polygon points="752,230 882,230 894,220 764,220" fill="#E06A5C" opacity="0.9"/>
+            <polygon points="882,230 894,220 894,552 882,560" fill="#5A150F"/>
+            <rect x="752" y="230" width="130" height="330" fill="url(#brickF)"/>
+            <rect x="752" y="230" width="130" height="330" fill="url(#winA)"/><rect x="752" y="230" width="130" height="330" fill="url(#winB)"/>
+          </g>
+          <!-- B7 teal -->
+          <g>
+            <polygon points="902,310 1032,310 1044,300 914,300" fill="#2BD0CA" opacity="0.9"/>
+            <polygon points="1032,310 1044,300 1044,552 1032,560" fill="#084A48"/>
+            <rect x="902" y="310" width="130" height="250" fill="url(#tealF)"/>
+            <rect x="902" y="310" width="130" height="250" fill="url(#winA)"/><rect x="902" y="310" width="130" height="250" fill="url(#winB)"/>
+          </g>
+          <!-- B8 gray — Newton's rooftop -->
+          <g>
+            <polygon points="1054,272 1194,272 1200,267 1066,262" fill="#98A2BC" opacity="0.95"/>
+            <rect x="1054" y="272" width="146" height="288" fill="url(#grayF)"/>
+            <rect x="1054" y="272" width="146" height="288" fill="url(#winA)"/><rect x="1054" y="272" width="146" height="288" fill="url(#winB)"/>
+          </g>
+
+          <!-- ===== trajectory: ghost arc + live dotted trace + banana ===== -->
+          <path d="M 218 226 Q 300 120 392 88" fill="none" stroke="#EAF0FF" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round" opacity="0.35"/>
+          <path d="M 218 226 Q 420 -50 560 68" fill="none" stroke="#17B9B4" stroke-width="2.4" stroke-dasharray="1 11" stroke-linecap="round" opacity="0.95"/>
+          <!-- apex tick -->
+          <g transform="translate(438, 42)" font-family="ui-monospace, Menlo, monospace">
+            <line x1="0" y1="6" x2="0" y2="18" stroke="#FFE9A8" stroke-width="1.6"/>
+            <text x="0" y="0" text-anchor="middle" fill="#FFE9A8" font-size="12" letter-spacing="1">APEX · v↑ = 0</text>
+          </g>
+          <!-- banana mid-flight -->
+          <g transform="translate(560, 68) rotate(118)">
+            <path d="M -16 2 Q 0 16 16 2 Q 0 7 -16 2 Z" fill="#FFD23F" stroke="#E0A81C" stroke-width="1"/>
+          </g>
+          <!-- tangent velocity arrow on banana -->
+          <g stroke="#FFD23F" stroke-width="2" opacity="0.85">
+            <line x1="572" y1="74" x2="608" y2="98"/>
+            <polygon points="612,101 600,96 605,88" fill="#FFD23F" stroke="none"/>
+          </g>
+
+          <!-- ===== physics overlay at launch point ===== -->
+          <g font-family="ui-monospace, Menlo, monospace">
+            <!-- components (dashed) -->
+            <line x1="218" y1="226" x2="304" y2="226" stroke="#FFE9A8" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.8"/>
+            <polygon points="310,226 300,222 300,230" fill="#FFE9A8" opacity="0.8"/>
+            <text x="252" y="243" fill="#FFE9A8" font-size="12" opacity="0.95">v·cosθ 37</text>
+            <line x1="218" y1="226" x2="218" y2="118" stroke="#FFE9A8" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.8"/>
+            <polygon points="218,112 214,122 222,122" fill="#FFE9A8" opacity="0.8"/>
+            <text x="200" y="130" fill="#FFE9A8" font-size="12" opacity="0.95" text-anchor="end">v·sinθ 69</text>
+            <!-- resultant launch vector -->
+            <line x1="218" y1="226" x2="304" y2="118" stroke="#FFD23F" stroke-width="3.4" stroke-linecap="round"/>
+            <polygon points="310,110 294,116 302,126" fill="#FFD23F"/>
+            <text x="318" y="106" fill="#FFD23F" font-size="13" font-weight="bold">v = 78</text>
+            <!-- angle arc -->
+            <path d="M 254 226 A 36 36 0 0 0 235 196" fill="none" stroke="#FFD23F" stroke-width="1.6" opacity="0.9"/>
+            <text x="262" y="205" fill="#FFD23F" font-size="12">62°</text>
+          </g>
+
+          <!-- ===== gorillas ===== -->
+          <!-- Kilo (thrower, arm up) -->
+          <g transform="translate(205, 250)">
+            <ellipse cx="0" cy="-2" rx="26" ry="5" fill="#000" opacity="0.35"/>
+            <path d="M -18 -4 Q -24 -34 0 -38 Q 24 -34 18 -4 Z" fill="#332A24"/>
+            <path d="M -14 -8 Q -18 -30 0 -33 Q 18 -30 14 -8 Z" fill="#3E332B" opacity="0.8"/>
+            <circle cx="4" cy="-44" r="11" fill="#332A24"/>
+            <circle cx="7" cy="-46" r="1.6" fill="#FFE9A8"/>
+            <path d="M -2 -50 Q 10 -56 14 -48" fill="none" stroke="#2A211B" stroke-width="3" stroke-linecap="round"/>
+            <path d="M -16 -30 Q -30 -18 -26 -4" fill="none" stroke="#332A24" stroke-width="8" stroke-linecap="round"/>
+            <path d="M 12 -28 Q 16 -46 13 -58" fill="none" stroke="#332A24" stroke-width="8" stroke-linecap="round"/>
+            <path d="M -6 -40 q 8 6 16 2" fill="none" stroke="#17B9B4" stroke-width="5" stroke-linecap="round"/>
+          </g>
+          <!-- Newton (waiting, knuckles down) -->
+          <g transform="translate(1126, 272)">
+            <ellipse cx="0" cy="-2" rx="26" ry="5" fill="#000" opacity="0.35"/>
+            <path d="M -18 -4 Q -24 -34 0 -38 Q 24 -34 18 -4 Z" fill="#332A24"/>
+            <path d="M -14 -8 Q -18 -30 0 -33 Q 18 -30 14 -8 Z" fill="#3E332B" opacity="0.8"/>
+            <circle cx="-4" cy="-44" r="11" fill="#332A24"/>
+            <circle cx="-8" cy="-46" r="1.6" fill="#FFE9A8"/>
+            <path d="M 16 -30 Q 28 -18 24 -2" fill="none" stroke="#332A24" stroke-width="8" stroke-linecap="round"/>
+            <path d="M -14 -28 Q -26 -16 -22 -2" fill="none" stroke="#332A24" stroke-width="8" stroke-linecap="round"/>
+            <path d="M -14 -38 q 10 6 20 2" fill="none" stroke="#C6392F" stroke-width="5" stroke-linecap="round"/>
+          </g>
+        </svg>
+
+        <!-- HTML HUD -->
+        <div class="hud" aria-hidden="true">
+          <div class="chip p1"><span class="dot"></span>KILO
+            <span class="pips"><span class="pip on"></span><span class="pip on"></span><span class="pip"></span></span>
+          </div>
+          <div class="chip p2"><span class="dot"></span>NEWTON
+            <span class="pips"><span class="pip on"></span><span class="pip"></span><span class="pip"></span></span>
+          </div>
+          <div class="chip wind"><span class="arrow">⟶</span> WIND 12</div>
+          <div class="aim-panel">
+            <div class="readout hot"><div class="lbl">ANGLE</div><div class="val">62<small>°</small></div></div>
+            <div class="readout hot"><div class="lbl">VELOCITY</div><div class="val">78</div></div>
+            <div class="readout"><div class="lbl">GRAVITY</div><div class="val">9.8</div></div>
+          </div>
+          <div class="turn-banner">KILO'S THROW · ROUND 3</div>
+          <div class="throw-btn">THROW</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="annot-grid">
+      <div class="annot"><span class="key" style="background: var(--banana);"></span><div><h3>Launch vector, decomposed live</h3><p>The solid arrow is the throw; dashed arrows are v·cosθ and v·sinθ with real numbers. Drag the dial or tap the readouts to type — the 1991 ritual, kept sacred.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--teal);"></span><div><h3>Dotted trace &amp; apex tick</h3><p>The banana draws its trajectory as it flies. At the apex, vertical velocity hits zero and the overlay says so — the single clearest physics beat in the game.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--glow);"></span><div><h3>Wind ribbon</h3><p>Direction and strength, re-rolled each round. Wind drift is quadratic in flight time — slow lobs bend far more than fastballs, exactly as in the original.</p></div></div>
+      <div class="annot"><span class="key" style="background: #31234F;"></span><div><h3>Persistent craters</h3><p>Misses carve volumetric chunks out of buildings, exposing glowing interior floors. The level remembers the whole duel.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--brick);"></span><div><h3>Score pips &amp; hot-seat turns</h3><p>First to three. Turn banner and active-side highlight make pass-and-play unambiguous on one device.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--slate);"></span><div><h3>Sol reacts</h3><p>The sun goes shocked when overflown, squints at explosions, and naps if you take too long to aim. A silent third character.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEBRIEF ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">03 · The physics overlay</p>
+    <h2 class="section-title">Every miss, explained</h2>
+    <p class="lede">The original taught by punishment. Bananarc shows its work: after each throw the trajectory stays ghosted with a debrief card, and the sentence “wind cost you 9 meters” is what makes players feel the model.</p>
+
+    <div class="debrief-wrap">
+      <div class="debrief-card" role="img" aria-label="Debrief card showing throw statistics including wind drift">
+        <div class="hd"><span class="who">● KILO</span><span class="n">THROW 4 · ROUND 3</span></div>
+        <div class="stat-rows">
+          <div class="srow"><span class="l">Angle</span><span class="v">62°</span></div>
+          <div class="srow"><span class="l">Velocity</span><span class="v">78</span></div>
+          <div class="srow"><span class="l">Flight time</span><span class="v">4.6 s</span></div>
+          <div class="srow"><span class="l">Apex height</span><span class="v">41 m</span></div>
+          <div class="srow"><span class="l">Distance</span><span class="v">63 m</span></div>
+          <div class="srow drift"><span class="l">Wind drift</span><span class="v">−9 m ⟵</span></div>
+        </div>
+        <div class="drift-diagram">
+          <svg viewBox="0 0 340 74" aria-hidden="true">
+            <path d="M 12 62 Q 130 -30 252 58" fill="none" stroke="#5A657F" stroke-width="1.6" stroke-dasharray="3 5"/>
+            <path d="M 12 62 Q 118 -30 218 58" fill="none" stroke="#17B9B4" stroke-width="2" stroke-dasharray="1 7"/>
+            <line x1="218" y1="64" x2="252" y2="64" stroke="#FF9A8F" stroke-width="2"/>
+            <line x1="218" y1="60" x2="218" y2="68" stroke="#FF9A8F" stroke-width="2"/>
+            <line x1="252" y1="60" x2="252" y2="68" stroke="#FF9A8F" stroke-width="2"/>
+            <text x="235" y="52" text-anchor="middle" fill="#FF9A8F" font-size="10" font-family="ui-monospace, Menlo, monospace">−9 m</text>
+            <text x="256" y="46" fill="#5A657F" font-size="9" font-family="ui-monospace, Menlo, monospace">no wind</text>
+            <text x="150" y="70" fill="#17B9B4" font-size="9" font-family="ui-monospace, Menlo, monospace">actual</text>
+          </svg>
+        </div>
+      </div>
+      <div class="debrief-copy">
+        <div class="feature-list">
+          <div class="f"><h3>While aiming<span class="mono-tag">INTENT</span></h3><p>Launch vector with live component decomposition and a short windless ghost arc — enough to communicate shape, never the landing point. No aim assist, ever.</p></div>
+          <div class="f"><h3>During flight<span class="mono-tag">TRACE</span></h3><p>Dotted trace behind the banana; a tangent velocity arrow shrinks vertically toward the apex and flips — projectile motion, performed.</p></div>
+          <div class="f"><h3>After the throw<span class="mono-tag">DEBRIEF</span></h3><p>The trajectory stays ghosted until the next player commits. The card compares actual landing vs. windless landing. Compare, adjust, throw again — the learning loop of the whole game.</p></div>
+          <div class="f"><h3>Purist option<span class="mono-tag">CLASSIC</span></h3><p>Overlay verbosity: Full / Minimal / Off. Classic mode is 1991 with better fur.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ART DIRECTION ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">04 · Art direction</p>
+    <h2 class="section-title">EGA, remastered in 3D</h2>
+    <p class="lede">Every hue descends from the original EGA screen — pushed just far enough for modern materials and lighting to live in it. Left swatch: the 1991 color. Right swatch: our remaster.</p>
+
+    <div class="pal-grid">
+      <div class="pal"><div class="swatches"><div style="background:#0000A8"></div><div style="background:#1424C8"></div></div><div class="meta"><div class="name">DOS Blue</div><div class="hexes">#0000A8 → #1424C8</div></div></div>
+      <div class="pal"><div class="swatches"><div style="background:#00A8A8"></div><div style="background:#17B9B4"></div></div><div class="meta"><div class="name">Teal Glass</div><div class="hexes">#00A8A8 → #17B9B4</div></div></div>
+      <div class="pal"><div class="swatches"><div style="background:#A80000"></div><div style="background:#C6392F"></div></div><div class="meta"><div class="name">Brick</div><div class="hexes">#A80000 → #C6392F</div></div></div>
+      <div class="pal"><div class="swatches"><div style="background:#A8A8A8"></div><div style="background:#9AA3B2"></div></div><div class="meta"><div class="name">Concrete</div><div class="hexes">#A8A8A8 → #9AA3B2</div></div></div>
+      <div class="pal"><div class="swatches"><div style="background:#FCFC54"></div><div style="background:#FFD23F"></div></div><div class="meta"><div class="name">Banana</div><div class="hexes">#FCFC54 → #FFD23F</div></div></div>
+      <div class="pal"><div class="swatches"><div style="background:#FFFFFF"></div><div style="background:#FFE9A8"></div></div><div class="meta"><div class="name">Window Glow</div><div class="hexes">#FFFFFF → #FFE9A8</div></div></div>
+    </div>
+    <p class="pal-legend">1991 EGA&nbsp;&nbsp;→&nbsp;&nbsp;2026 REMASTER</p>
+
+    <div class="mat-grid">
+      <div class="mat"><div class="chip-vis" style="background: linear-gradient(135deg, #2BD0CA, #0C6663 60%), #0C6663;"></div><div class="body"><h3>Teal curtain-wall glass</h3><p>Low-roughness panels with warm window bounce; reflections catch the moon, never the camera.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: repeating-linear-gradient(0deg, #B23429 0 8px, #9A2A20 8px 10px);"></div><div class="body"><h3>Weathered brick</h3><p>High-roughness, subtle normal detail; crater edges expose scorched mortar and rebar.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: linear-gradient(180deg, #6E7891, #4C5570);"></div><div class="body"><h3>Concrete &amp; rooftop grit</h3><p>Matte slabs with AC units, antennas, pigeon silhouettes — rooftop staging for the gorillas.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: radial-gradient(circle at 35% 30%, #4A3D33, #2A211B 75%);"></div><div class="body"><h3>Gorilla fur</h3><p>Groomed cards/shells, wind-reactive; warm rim light from the city separates fur from night sky.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: linear-gradient(120deg, #FFE06A, #E0A81C);"></div><div class="body"><h3>Banana wax</h3><p>Slight subsurface warmth, glossy highlight tracking the spin — the most-watched object in the game.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: radial-gradient(circle at 50% 60%, #FFE9A8, rgba(255,233,168,0) 70%), #0A1148;"></div><div class="body"><h3>Light itself</h3><p>One moon key light, thousands of warm window fills. Explosions are the only hot light source — earn them.</p></div></div>
+    </div>
+
+    <div class="col2">
+      <div>
+        <h3 class="subhead">Camera &amp; staging</h3>
+        <p class="prose">Fixed side-on, near-orthographic long lens — 3D volumes with the classic silhouette. Background parallax only; a gentle push-in is reserved for the hit moment. The frame never cuts during flight: <b>readability beats cinema</b> in an aiming game.</p>
+      </div>
+      <div>
+        <h3 class="subhead">Motion principles</h3>
+        <p class="prose">Weight over snappiness: gorillas are heavy, and every throw earns its distance through anticipation. Physics objects (banana, debris) obey the simulation exactly; characters are hand-keyed against it. <b>Nothing pops — everything follows through.</b></p>
+      </div>
+    </div>
+
+    <h3 class="subhead" style="margin-top: 40px;">Character animation set (per gorilla)</h3>
+    <div class="anim-beats">
+      <div class="beat"><span class="b-name">Idle</span><span class="b-t">loop 4 s</span><p>Weight-shift sway, knuckle taps, occasional glance at the wind ribbon.</p></div>
+      <div class="beat"><span class="b-name">Windup → throw</span><span class="b-t">1.4 s</span><p>Full anticipation crouch, hip rotation, release synced to the simulation's launch frame. Velocity value scales the windup intensity.</p></div>
+      <div class="beat"><span class="b-name">Near-miss flinch</span><span class="b-t">0.6 s</span><p>Duck and cover when a banana lands within one building — comedy and feedback in one beat.</p></div>
+      <div class="beat"><span class="b-name">Defeat</span><span class="b-t">1.8 s</span><p>Ragdoll blend to a seated slump; dignity intact, rematch implied.</p></div>
+      <div class="beat"><span class="b-name">Victory dance</span><span class="b-t">3 loops</span><p>The sacred chest-beat, escalating each loop; haptic thumps on every strike. This is the trailer shot.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLATFORMS ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">05 · Every Apple screen</p>
+    <h2 class="section-title">One purchase, four rooms</h2>
+    <p class="lede">Universal Purchase across iPhone, iPad, Mac, and Apple TV. Same deterministic simulation everywhere — a throw is just a seed, an angle, and a velocity.</p>
+    <div class="plat-grid">
+      <div class="plat">
+        <div class="frame" style="aspect-ratio: 19.5/9;">
+          <svg viewBox="0 0 195 90" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true"><rect x="8" y="50" width="26" height="40" fill="#0E7B78"/><rect x="40" y="34" width="22" height="56" fill="#4C5570"/><rect x="68" y="58" width="30" height="32" fill="#8A241D"/><rect x="104" y="42" width="26" height="48" fill="#0E7B78"/><rect x="136" y="52" width="28" height="38" fill="#4C5570"/><rect x="170" y="38" width="20" height="52" fill="#8A241D"/><path d="M 20 46 Q 90 -10 168 34" fill="none" stroke="#FFD23F" stroke-width="1.4" stroke-dasharray="1 4"/></svg>
+        </div>
+        <p class="os">iOS · LANDSCAPE</p><h3>iPhone</h3>
+        <p>Thumb-reach dial + slingshot drag; haptic detents every 5°. Pass-and-play hot-seat with a turn hand-off screen.</p>
+      </div>
+      <div class="plat">
+        <div class="frame" style="aspect-ratio: 4/3;">
+          <svg viewBox="0 0 160 120" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true"><rect x="6" y="66" width="24" height="54" fill="#0E7B78"/><rect x="36" y="48" width="20" height="72" fill="#4C5570"/><rect x="62" y="76" width="26" height="44" fill="#8A241D"/><rect x="94" y="58" width="24" height="62" fill="#0E7B78"/><rect x="124" y="68" width="30" height="52" fill="#4C5570"/><path d="M 16 62 Q 80 -4 138 62" fill="none" stroke="#FFD23F" stroke-width="1.4" stroke-dasharray="1 4"/></svg>
+        </div>
+        <p class="os">iPadOS</p><h3>iPad</h3>
+        <p>The couch showcase: split HUD, one player per bezel edge. Pencil hover previews the dial; pointer support throughout.</p>
+      </div>
+      <div class="plat">
+        <div class="frame" style="aspect-ratio: 16/10;">
+          <svg viewBox="0 0 160 100" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true"><rect x="6" y="56" width="24" height="44" fill="#0E7B78"/><rect x="36" y="40" width="20" height="60" fill="#4C5570"/><rect x="62" y="64" width="26" height="36" fill="#8A241D"/><rect x="94" y="48" width="24" height="52" fill="#0E7B78"/><rect x="124" y="58" width="30" height="42" fill="#4C5570"/><path d="M 16 52 Q 80 -8 138 52" fill="none" stroke="#FFD23F" stroke-width="1.4" stroke-dasharray="1 4"/></svg>
+        </div>
+        <p class="os">macOS · NATIVE</p><h3>Mac</h3>
+        <p>Keyboard-first, exactly like 1991: type the angle, Tab, type the velocity, Return to throw. Scroll wheel fine-tunes.</p>
+      </div>
+      <div class="plat">
+        <div class="frame" style="aspect-ratio: 16/9;">
+          <svg viewBox="0 0 160 90" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true"><rect x="6" y="50" width="24" height="40" fill="#0E7B78"/><rect x="36" y="36" width="20" height="54" fill="#4C5570"/><rect x="62" y="58" width="26" height="32" fill="#8A241D"/><rect x="94" y="44" width="24" height="46" fill="#0E7B78"/><rect x="124" y="52" width="30" height="38" fill="#4C5570"/><path d="M 16 46 Q 80 -8 138 46" fill="none" stroke="#FFD23F" stroke-width="1.4" stroke-dasharray="1 4"/></svg>
+        </div>
+        <p class="os">tvOS · 10-FOOT</p><h3>Apple TV</h3>
+        <p>Siri Remote swipe-ring aiming or any game controller. Oversized readouts legible at three meters — the party build.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BRAND ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">06 · Name &amp; brand</p>
+    <h2 class="section-title">Calling it Bananarc</h2>
+    <p class="lede">"Gorillas" itself is a trademark minefield (an active delivery brand, Donkey Kong adjacency). The invented word <b style="color: var(--ink);">Bananarc</b> names the projectile and the physics in one breath — ownable, searchable, and it looks great mid-throw.</p>
+
+    <div class="brand-grid">
+      <div class="brand-card">
+        <h3>Name shortlist</h3>
+        <div class="name-chips">
+          <span class="nchip pick">Bananarc ★</span>
+          <span class="nchip">Rooftop Rumble</span>
+          <span class="nchip">Going Ballistic</span>
+          <span class="nchip">Ape Arc</span>
+          <span class="nchip">Kilo &amp; Newton</span>
+          <span class="nchip">Skyline Slam</span>
+          <span class="nchip">Banana Ballistics</span>
+        </div>
+        <p style="margin-top: 14px; font-size: 13px; color: var(--ink-dim);">Full rationale and trademark notes in <span class="mono">docs/BRAND.md</span>. Banana Ballistics is the clearance fallback.</p>
+      </div>
+      <div class="brand-card">
+        <h3>Taglines</h3>
+        <div class="taglines">
+          <p class="tg">Angle. Velocity. Bananas.<small>PRIMARY — STORE &amp; KEY ART</small></p>
+          <p class="tg">The physics of settling arguments.<small>TRAILER</small></p>
+          <p class="tg">Old-school artillery, rebuilt.<small>PRESS / NOSTALGIA HOOK</small></p>
+        </div>
+      </div>
+      <div class="brand-card">
+        <h3>App icon</h3>
+        <div class="icon-row">
+          <div class="icon-tile" role="img" aria-label="App icon concept: banana arcing over a teal skyline on a DOS-blue field">
+            <svg viewBox="0 0 108 108" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true">
+              <rect x="6" y="82" width="20" height="26" fill="#0E7B78"/>
+              <rect x="30" y="72" width="16" height="36" fill="#128F8B"/>
+              <rect x="50" y="86" width="22" height="22" fill="#0E7B78"/>
+              <rect x="76" y="76" width="18" height="32" fill="#128F8B"/>
+              <path d="M 16 78 Q 54 4 92 72" fill="none" stroke="#FFD23F" stroke-width="2.6" stroke-dasharray="1 8" stroke-linecap="round"/>
+              <g transform="translate(54, 32) rotate(30)">
+                <path d="M -15 2 Q 0 15 15 2 Q 0 7 -15 2 Z" fill="#FFD23F" stroke="#E0A81C" stroke-width="1"/>
+              </g>
+            </svg>
+          </div>
+          <p>DOS-blue field, one banana at 45°, a crescent of teal skyline. No gorilla on the icon — <b style="color: var(--ink);">the banana is the brand.</b> Reads at 29 px.</p>
+        </div>
+      </div>
+      <div class="brand-card">
+        <h3>Wordmark &amp; voice</h3>
+        <p class="mini-wordmark">BANANARC
+          <svg style="position:absolute; left:-4%; top:-46%; width:108%; height:100%; overflow:visible;" viewBox="0 0 200 40" aria-hidden="true">
+            <path d="M 10 38 Q 100 -8 190 38" fill="none" stroke="#FFD23F" stroke-width="1.8" stroke-dasharray="1 6" stroke-linecap="round" opacity="0.9"/>
+          </svg>
+        </p>
+        <p style="margin-top: 14px; font-size: 13.5px; color: var(--ink-dim);">Heavy geometric sans, tight-tracked, with the dotted arc flying through. Voice: deadpan sports-commentary warmth — <span class="mono" style="color: var(--glow);">"Apex: 41 m. Wind ate 9 of them."</span></p>
+        <div class="price-strip">
+          <span class="price-big">$4.99</span>
+          <p>One price, four platforms, no ads, no IAP, works offline. Privacy label: <b style="color: var(--ink);">Data Not Collected.</b></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Companion to <span class="mono">docs/PRD.md</span> and <span class="mono">docs/BRAND.md</span>. Mechanics reverse-referenced from the original <span class="mono">GORILLA.BAS</span> (MS-DOS 5, 1991) — trajectory, gravity 9.8, quadratic wind drift, and building generation preserved verbatim; all art, code, and naming original.</p>
+    <p class="mono" style="margin-top: 12px;">BANANARC · ANGLE — VELOCITY — BANANAS</p>
+  </div>
+</footer>
