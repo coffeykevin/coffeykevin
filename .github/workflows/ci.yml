@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+env:
+  GODOT_VERSION: 4.4.1
+
+jobs:
+  test:
+    name: Godot headless tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: godot-bin
+          key: godot-${{ env.GODOT_VERSION }}-linux
+
+      - name: Download Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p godot-bin
+          curl -sL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip -d godot-bin
+          chmod +x "godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Import project
+        run: |
+          "godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path game --import
+
+      - name: Simulation smoke test
+        run: |
+          "godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path game -s tests/smoke.gd
+
+      - name: Full-match autotest (AI vs AI, fixed seed)
+        run: |
+          BANANARC_AUTOTEST=1 timeout 300 \
+            "godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path game

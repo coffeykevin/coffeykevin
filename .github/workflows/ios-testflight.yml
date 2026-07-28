@@ -1,0 +1,176 @@
+name: iOS TestFlight
+
+# Deploys Bananarc to TestFlight from a cloud Mac runner — no local Mac
+# needed. One-time setup (Apple Developer account, certificates, secrets):
+# see docs/DEPLOY.md.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+env:
+  GODOT_VERSION: 4.4.1
+
+jobs:
+  build-and-upload:
+    name: Export, sign, upload
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preflight — check required secrets
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          missing=0
+          for v in APPLE_TEAM_ID IOS_BUNDLE_ID APPLE_CERT_P12_BASE64 \
+                   APPLE_CERT_PASSWORD IOS_PROVISIONING_PROFILE_BASE64 \
+                   IOS_PROFILE_NAME ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64; do
+            if [ -z "${!v}" ]; then
+              echo "::error::Missing repository secret: $v (see docs/DEPLOY.md)"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Cache Godot + export templates
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            godot-macos
+            godot-templates.tpz
+          key: godot-${{ env.GODOT_VERSION }}-macos-templates
+
+      - name: Download Godot + export templates
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          curl -sL -o godot-macos.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip"
+          mkdir -p godot-macos && unzip -q godot-macos.zip -d godot-macos
+          curl -sL -o godot-templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+
+      - name: Install export templates
+        run: |
+          DEST="$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$DEST"
+          unzip -q godot-templates.tpz -d /tmp/tpl
+          mv /tmp/tpl/templates/* "$DEST/"
+
+      - name: Configure export preset
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+        run: |
+          sed -i '' "s/TEAM_ID_PLACEHOLDER/${APPLE_TEAM_ID}/" game/export_presets.cfg
+          sed -i '' "s/BUNDLE_ID_PLACEHOLDER/${IOS_BUNDLE_ID}/" game/export_presets.cfg
+          # Build number must increase per upload; use the workflow run number.
+          sed -i '' "s|application/version=\"1\"|application/version=\"${GITHUB_RUN_NUMBER}\"|" game/export_presets.cfg
+
+      - name: Export Xcode project from Godot
+        run: |
+          GODOT="godot-macos/Godot.app/Contents/MacOS/Godot"
+          "$GODOT" --headless --path game --import
+          mkdir -p build/ios
+          "$GODOT" --headless --path game --export-release "iOS" \
+            "$GITHUB_WORKSPACE/build/ios/Bananarc.ipa"
+          echo "Exported contents:" && ls -la build/ios
+
+      - name: Set up signing keychain
+        env:
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          KEYCHAIN=/tmp/build.keychain-db
+          KEYCHAIN_PASS=$(uuidgen)
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          security set-keychain-settings -lut 3600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          echo "$APPLE_CERT_P12_BASE64" | base64 --decode > /tmp/dist.p12
+          security import /tmp/dist.p12 -k "$KEYCHAIN" \
+            -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASS" "$KEYCHAIN" > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode \
+            > "$HOME/Library/MobileDevice/Provisioning Profiles/bananarc.mobileprovision"
+
+      - name: Archive with xcodebuild
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+        run: |
+          XCODEPROJ=$(find build/ios -maxdepth 1 -name "*.xcodeproj" | head -1)
+          echo "Using project: $XCODEPROJ"
+          SCHEME=$(xcodebuild -project "$XCODEPROJ" -list -json \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['project']['schemes'][0])")
+          echo "Using scheme: $SCHEME"
+          xcodebuild archive \
+            -project "$XCODEPROJ" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -archivePath build/Bananarc.xcarchive \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$IOS_PROFILE_NAME"
+
+      - name: Export signed IPA
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+        run: |
+          sed -e "s/__TEAM_ID__/${APPLE_TEAM_ID}/" \
+              -e "s/__BUNDLE_ID__/${IOS_BUNDLE_ID}/" \
+              -e "s/__PROFILE_NAME__/${IOS_PROFILE_NAME}/" \
+              deploy/exportOptions.template.plist > /tmp/exportOptions.plist
+          xcodebuild -exportArchive \
+            -archivePath build/Bananarc.xcarchive \
+            -exportOptionsPlist /tmp/exportOptions.plist \
+            -exportPath build/ipa
+          ls -la build/ipa
+
+      - name: Upload to TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          python3 - <<'EOF'
+          import base64, json, os
+          key = base64.b64decode(os.environ["ASC_KEY_P8_BASE64"]).decode()
+          json.dump({
+              "key_id": os.environ["ASC_KEY_ID"],
+              "issuer_id": os.environ["ASC_ISSUER_ID"],
+              "key": key,
+              "in_house": False,
+          }, open("/tmp/asc_key.json", "w"))
+          EOF
+          IPA=$(find build/ipa -name "*.ipa" | head -1)
+          echo "Uploading: $IPA"
+          fastlane pilot upload \
+            --ipa "$IPA" \
+            --api_key_path /tmp/asc_key.json \
+            --skip_waiting_for_build_processing true
+
+      - name: Upload IPA as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bananarc-ipa
+          path: build/ipa/*.ipa
+          retention-days: 14
