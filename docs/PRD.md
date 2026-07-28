@@ -158,15 +158,19 @@ rules — facts — and are re-implemented from scratch in Swift.
 1. **Round start.** City generates (or persists mid-match), wind rolls,
    gorillas take their rooftops, turn banner shows whose go it is.
 2. **Aim.** Active player sets **Angle** (0–90°, mirrored for right player)
-   and **Velocity** (10–200). Inputs:
-   - Drag the aim dial (coarse) — fine-tune with a second slower ring.
+   and **Power** (0–100, mapping linearly onto the classic velocity range so
+   the original's numbers still transfer). Inputs:
+   - The bottom control bar: segmented Power meter (yellow) and Angle meter
+     (cyan) flanking a central circular **FIRE** button; drag the meters or
+     use ± steppers.
    - Type exact numbers (tap the readout → numeric pad; always available —
-     this is sacred to the original).
-   - Previous throw's values are pre-filled, exactly like the original's
+     this is sacred to the original; classic velocity values accepted).
+   - Previous shot's values are pre-filled, exactly like the original's
      muscle-memory iteration loop.
-3. **Throw.** Gorilla plays a full anticipation-windup-release animation;
-   banana leaves the hand at the configured angle/velocity, spinning
-   end-over-end (the original's 4-frame rotation, now continuous).
+3. **Fire.** The gorilla shoulders its **banana launcher** (per the approved
+   concept art): brace, recoil, muzzle smoke; the banana leaves the tube at
+   the configured angle/power, spinning end-over-end (the original's 4-frame
+   rotation, now continuous).
 4. **Flight.** Camera stays locked side-on (no cinematic cuts — readability
    first). Banana arcs under gravity + wind. Sun reacts if crossed.
 5. **Resolution.**
@@ -281,36 +285,38 @@ gesture-only inputs); see §13.
   so 3D buildings read as 3D without breaking the classic silhouette).
   Slight parallax on background layers; gentle push-in on resolution moments
   only.
-- **Rendering target:** photoreal. Physically-based, scan-derived materials;
-  one cool moon key light (~4,100 K) against thousands of warm tungsten
-  window fills (~2,700 K) and sodium haze at the horizon; filmic tone curve,
-  gentle vignette, fine film grain. Every hue is *graded from* the original
-  EGA screen (DOS blue → night air, EGA teal → curtain-wall glass, EGA red →
-  weathered brick) so a squint still reads as 1991.
-- **Skyline:** procedural per §2 rules. Buildings are fully modeled volumes —
-  teal glass towers (roughness ~0.08, HDRI reflections), normal-mapped brick,
-  stained concrete — with rooftop detail (AC units, antennas with beacon
-  lights, parapets) and window grids whose lit/unlit mix twinkles over the
-  match. A hazy distant-skyline layer provides atmospheric depth.
+- **Rendering target:** photoreal **golden hour over a New-York-inspired
+  city**, per the approved concept art. Low warm sun (~3,000 K) backlighting
+  the skyline; storm-grey cloud deck above an amber haze horizon; long
+  shadows; scattered warm interior windows in shadowed facades; filmic tone
+  curve and fine grain. The classic EGA palette survives as the UI accent
+  system and as the unlockable "CGA Dream" skin.
+- **Skyline:** procedural per §2 rules, staged in depth: hazy backlit
+  landmark layer (an Empire-State-class spire, distant towers), a mid layer
+  of dense tenement rooftops with chimneys, parapets, and a trestle-mounted
+  **water tower**, and detailed brownstone/brick foreground towers whose
+  rooftops the gorillas hold. Fully modeled volumes, scan-derived masonry,
+  normal-mapped brick, cornice and fire-escape detail.
 - **Destruction:** volumetric chunk removal with persistent craters exposing
   interior floors (desks, a sad water cooler — one readable gag per interior,
   never noisy).
-- **Backdrop:** photoreal night sky graded from DOS blue — stars, a haloed
-  moon, city light pollution. The **sun (Sol)** is the one deliberately
-  stylized actor: a photoreal sun with a face would be unsettling, so Sol
-  keeps a cartoon face but is lit and haloed to sit naturally in the sky —
-  shocked when overflown, squints at explosions, naps during long aim phases.
-- **Time/weather variants (cosmetic unlocks):** Classic Night (default),
-  Dusk (blue→magenta), CGA Dream (a stylized cyan/magenta grade — the one
-  non-photoreal skin, as a wink).
-- **Gorillas:** two hero characters, **Kilo** (left, teal scarf) and
-  **Newton** (right, red scarf). High-fidelity fur — full strand groom on
-  Mac/high-tier devices, baked shell cards on lower tiers — anisotropic
-  sheen, wind-reactive guard hairs, cool moonlit rim light; realistic weight
-  with proportions only gently exaggerated. Animation set: idle sway +
-  knuckle taps, windup/throw (full weight shift), duck/flinch on near-miss,
-  defeat ragdoll-to-sit, and the sacred **chest-beat victory dance** —
-  motion-designed, 3 escalating loops.
+- **Backdrop:** golden-hour sky — storm-grey clouds breaking into warm amber
+  glow, the sun low and off-frame so the whole city is rim-lit. The classic
+  sun-with-a-face (**Sol**) moves to the "CGA Dream" cosmetic skin and as an
+  easter egg (flying a banana through the sun's screen position in any skin
+  still triggers a hidden reaction) — the photoreal sky itself stays clean.
+- **Time/weather variants (cosmetic unlocks):** Golden Hour (default),
+  Blue Hour (dusk, tungsten windows dominant), Overcast Drizzle, and
+  CGA Dream (the one stylized skin, as a wink to 1991 — Sol included).
+- **Gorillas:** two hero characters, **Kilo** (left, signal-yellow accents)
+  and **Newton** (right, signal-cyan accents), matching the HUD's Power and
+  Angle colors. Photoreal builds, seated at the parapet with their **banana
+  launchers** shouldered; full strand-groom fur on Mac/high-tier devices,
+  baked shell cards elsewhere; warm golden rim light off the fur is the
+  scene's signature image. Animation set: idle sway + launcher checks,
+  shoulder-brace-fire with recoil and muzzle smoke, duck/flinch on
+  near-miss, defeat ragdoll-to-sit, and the sacred **chest-beat victory
+  dance** — motion-designed, 3 escalating loops.
 
 Full art direction with mockups: `mockup/index.html`.
 
@@ -335,8 +341,13 @@ Full art direction with mockups: `mockup/index.html`.
    Play / Modes / Practice / Settings.
 2. **Match setup:** players (hot-seat names, exactly like the original's
    name prompts), points to win, gravity, wind, city size.
-3. **In-game:** HUD top corners = players + score; top-center = wind ribbon
-   + sun; active side shows angle/velocity readouts + dial; THROW button.
+3. **In-game (per approved concept):** dark-charcoal HUD floating over the
+   scene — top-center **wind pill** ("WIND → 23 MPH"), menu button top-left,
+   emote/chat button top-right (async matches); floating player name tags
+   with pointer triangles above each gorilla (yellow P1, cyan P2); bottom
+   control bar with segmented **POWER** meter (yellow, 0–100), central
+   circular **FIRE** button, and segmented **ANGLE** meter (cyan, 0–90),
+   readouts tappable for typed entry.
 4. **Debrief overlay** (§7.3) between throws.
 5. **Match end:** victory dance stage, stats card (accuracy, best throw,
    wind drama), rematch / swap sides / done.

@@ -31,28 +31,31 @@ without the name being on the box.
 - **Logo:** heavy geometric sans wordmark, tight-tracked; the second **A**'s
   crossbar is replaced by a small banana mid-arc with a dotted trajectory
   entering from the first syllable — the mark literally throws.
-- **App icon:** DOS-blue field, single banana at 45° with a dotted arc and a
-  crescent of teal skyline in the lower corner. No gorilla on the icon —
-  the banana is the brand.
-- **Color:** two tiers, both descended from the EGA screen.
-  *Brand & UI accents (vivid):*
-  - `#F5C842` Banana — primary accent, CTAs
-  - `#1FB5AC` Teal — Kilo / player 1
-  - `#C6392F` Brick — Newton / player 2
-  - `#05070F` Midnight — ground/ink
-  *In-game world (photoreal grade):*
-  - `#0B1526` Night Air (from EGA `#0000A8`)
-  - `#1E5854` Teal Glass (from `#00A8A8`)
-  - `#6E362C` Weathered Brick (from `#A80000`)
-  - `#57616F` Concrete (from `#A8A8A8`)
-  - `#FFB35C` Tungsten Window (from `#FFFFFF`)
-  The crisp vivid accents live in the UI overlay floating *above* the
-  photoreal world — never dressed into it.
+- **App icon:** charcoal-to-storm-blue field, single banana at 45° with a
+  white dotted arc and a golden-rimmed brownstone skyline crescent in the
+  lower corner. No gorilla on the icon — the banana is the brand.
+- **Color** (per the approved golden-hour concept art):
+  *HUD & brand accents:*
+  - `#FFC93C` Banana Yellow — Kilo / player 1, Power meter, CTAs
+  - `#35C4F0` Signal Cyan — Newton / player 2, Angle meter
+  - `#1C2026` HUD Charcoal — control bar, pills, buttons
+  - `#FFFFFF` Trace White — trajectory dots, readouts
+  *In-game world (golden hour):*
+  - `#4E5A68` Storm Cloud — upper sky deck
+  - `#EDC584` Golden Haze — horizon glow, atmosphere
+  - `#E8CE9E` Limestone — backlit landmark towers
+  - `#5C3A2E` Brownstone — foreground masonry
+  - `#2A211C` Rooftop Shadow — foreground darks, ink
+  The crisp charcoal-and-accent HUD floats *above* the photoreal world —
+  never dressed into it. The 1991 EGA palette lives on in the unlockable
+  "CGA Dream" skin.
 - **Voice:** deadpan sports-commentary warmth. Short sentences. Physics
   terms used correctly and casually ("Apex: 41 m. Wind ate 9 of them.").
   Never zany, never corporate.
-- **Characters:** **Kilo** (teal scarf, left rooftop, showboat) and
-  **Newton** (red scarf, right rooftop, methodical). The sun is **Sol** —
-  a silent third character who reacts to everything.
+- **Characters:** **Kilo** (yellow accents, left rooftop, showboat) and
+  **Newton** (cyan accents, right rooftop, methodical), each seated at the
+  parapet with a shouldered banana launcher. **Sol**, the classic
+  sun-with-a-face, survives as the star of the CGA Dream skin and a hidden
+  easter egg.
 - **Store positioning:** "A premium remake-in-spirit of the 1991 classic.
   One price. No ads. Couch duels on every Apple screen."
