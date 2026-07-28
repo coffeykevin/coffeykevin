@@ -284,10 +284,18 @@ gesture-only inputs); see §13.
 
 ## 9. City, camera & presentation
 
-- **Camera:** fixed side-on, near-orthographic long lens (subtle perspective
-  so 3D buildings read as 3D without breaking the classic silhouette).
-  Slight parallax on background layers; gentle push-in on resolution moments
-  only.
+- **Camera & dimensionality:** the scene is **truly three-dimensional** — a
+  full 3D city with real depth, rendered through a perspective camera
+  holding the classic side-on framing (long lens, so the silhouette still
+  reads as Gorillas). Buildings are volumes at staggered depths: gameplay
+  buildings sit on the throw plane, non-play towers fill lanes in front of
+  and behind it, all shifting in true parallax as the camera breathes.
+  Gentle push-in on resolution moments only; the frame never cuts during
+  flight.
+- **Gameplay plane:** the simulation remains exactly the classic 2D model
+  (§2) evaluated on a single vertical plane through the city. Only
+  buildings on that plane collide; depth is presentation. This keeps 1991
+  physics intact inside a fully dimensional world.
 - **Rendering target:** photoreal **New-York-inspired city under a dynamic
   weather and lighting system**, per the approved concept art. Filmic tone
   curve and fine grain throughout. The classic EGA palette survives as the
@@ -316,12 +324,30 @@ gesture-only inputs); see §13.
   of the far skyline, never hit detection. Lightning and snow accumulation
   are ambient. The HUD always states condition and time (e.g. "STORM ·
   5:30 PM") so variance reads as a feature, not a bug.
-- **Skyline:** procedural per §2 rules, staged in depth: hazy backlit
-  landmark layer (an Empire-State-class spire, distant towers), a mid layer
-  of dense tenement rooftops with chimneys, parapets, and a trestle-mounted
-  **water tower**, and detailed brownstone/brick foreground towers whose
-  rooftops the gorillas hold. Fully modeled volumes, scan-derived masonry,
-  normal-mapped brick, cornice and fire-escape detail.
+- **Skyline — different on every load, and part of the game:** the city on
+  the throw plane is regenerated from a fresh seed every round (and every
+  app load), per the §2 rules — randomized widths, heights following a
+  rolled slope profile (upward / downward / valley / mountain), varied
+  materials. No two duels play the same.
+  - **Subtle obstructions by design:** the generator guarantees at least
+    one "interceptor" — a mid-city building (or its water tower, chimney,
+    or antenna) tall enough to clip the lazy 45° lob between the two
+    rooftops — so players must *shape* throws, not just bisect the screen.
+    Micro-obstructions (water tanks, parapets, rooftop sheds) add ±small
+    variance at crest heights; they're destructible like everything else.
+  - **Solvability guarantee:** after generation, the deterministic
+    integrator sweeps the angle/power space; the layout is accepted only if
+    both players retain multiple viable trajectory families in calm wind.
+    Reject-and-reroll is invisible and instant.
+  - **Distinctness check:** consecutive rounds must differ meaningfully
+    (skyline-profile distance metric) so "new city every round" is felt,
+    not just true.
+- **Staging in depth:** around the throw plane, non-play lanes complete the
+  city — a hazy backlit landmark layer (Empire-State-class spire, distant
+  towers), mid lanes of tenement rooftops with chimneys and trestle water
+  towers, and near-foreground silhouettes. Fully modeled volumes,
+  scan-derived masonry, normal-mapped brick, cornice and fire-escape
+  detail.
 - **Destruction:** volumetric chunk removal with persistent craters exposing
   interior floors (desks, a sad water cooler — one readable gag per interior,
   never noisy).
@@ -391,9 +417,21 @@ The game is built on **Godot Engine** (<https://godotengine.org>),
 Godot 4.x:
 
 - **Rendering:** Forward+ with the native **Metal** rendering backend on
-  Apple platforms (Godot 4.4+); one 3D scene, fixed side-on camera; the
-  weather system (§9) implemented as a `WorldEnvironment` + sky-shader rig
-  driven by the round's condition and clock time.
+  Apple platforms (Godot 4.4+); one fully 3D scene viewed through a
+  perspective camera in the classic side-on framing; the weather system
+  (§9) implemented as a `WorldEnvironment` + custom sky shader driven by
+  the round's condition and clock time.
+- **Real lighting & shaders (no faked light):** a physically-driven
+  `DirectionalLight3D` sun/moon positioned from the round's clock time,
+  casting real cascaded shadow maps across the skyline; real-time GI —
+  SDFGI on Mac/high-tier devices, baked lightmap GI + SSAO on mobile
+  tiers — so lit windows, craters, and explosions actually illuminate
+  their surroundings; volumetric fog for the Foggy/Rain/Storm conditions;
+  SSR-based wet-roof reflections in rain; explosion flashes as transient
+  omni lights with shadow. Custom Godot shaders: sky rig, shell fur,
+  wet/snow surface response, SDF-driven crater cutaways, heat-shimmer on
+  explosions. Every material is PBR; nothing is painted into textures that
+  the light rig should be doing.
 - **Language:** GDScript for game/UI flow; the deterministic simulation
   core (below) in a typed, engine-independent module (GDScript with typed
   arrays or C# — decide in M0) so replays never touch engine physics.

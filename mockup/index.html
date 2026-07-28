@@ -359,7 +359,7 @@ y = v·sinθ·t − ½g·t²</pre>
   <div class="wrap">
     <p class="eyebrow">02 · Gameplay mockup</p>
     <h2 class="section-title">The duel, mid-throw</h2>
-    <p class="lede">iPad landscape, sunset round, Kilo's throw away — full follow-through, banana on its white dotted arc. The weather system rolled "SUNSET · 7:45 PM" for this round; the charcoal HUD floats <b>above</b> the world, never dressed into it.</p>
+    <p class="lede">iPad landscape, sunset round, Kilo's throw away — full follow-through, banana on its white dotted arc. This round rolled "SUNSET · 7:45 PM" and a fresh skyline: the spire and water tower sit tall enough to clip a lazy lob, so the throw has to be shaped over them. The charcoal HUD floats <b>above</b> the world, never dressed into it.</p>
 
     <div class="stage-outer">
       <div class="stage" role="img" aria-label="High-fidelity gameplay mockup: sunset city skyline, two gorillas standing on rooftops, one in full throwing follow-through, a banana mid-flight on a white dotted arc, weather label reading Sunset 7:45 PM, and a full-width control bar reading Kilo, Power, Wind, Angle, Newton">
@@ -702,6 +702,8 @@ y = v·sinθ·t − ½g·t²</pre>
       <div class="annot"><span class="key" style="background: #FFFFFF;"></span><div><h3>White dotted trace</h3><p>The banana leaves a trail of clean white dots — the classic trace, restaged. It persists after the throw as the ghost the next player aims against.</p></div></div>
       <div class="annot"><span class="key" style="background: var(--banana);"></span><div><h3>Physics overlay, toggleable</h3><p>Launch vector in player color with faint v·cosθ / v·sinθ components at the release point. Full / Minimal / Off — this frame shows Minimal; Classic mode is pure 1991.</p></div></div>
       <div class="annot"><span class="key" style="background: var(--cyan);"></span><div><h3>Two numbers, always</h3><p>Power 0–100 maps linearly onto the classic velocity range and Angle mirrors the original degrees — 1991 muscle memory transfers untouched, whatever the sky is doing.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--brownstone);"></span><div><h3>A new city every round</h3><p>The throw-plane skyline regenerates from a fresh seed each round, and the generator guarantees at least one subtle interceptor — a tower, tank, or antenna that clips the lazy 45° lob. A solver validates that both players keep viable trajectories before the round starts.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--limestone);"></span><div><h3>Truly 3D, really lit</h3><p>Full perspective depth — non-play building lanes in front of and behind the throw plane, true parallax — under a real sun/moon light with cascaded shadows and GI. Only buildings on the throw plane collide; depth is presentation, physics stays 1991.</p></div></div>
     </div>
   </div>
 </section>
@@ -926,7 +928,15 @@ y = v·sinθ·t − ½g·t²</pre>
     <div class="col2">
       <div>
         <h3 class="subhead">Camera &amp; grade</h3>
-        <p class="prose">Fixed side-on, near-orthographic long lens — deep 3D staging (foreground brownstones, mid rooftops, hazed landmarks) with the classic silhouette. Warm filmic tone curve, gentle vignette, fine 35&nbsp;mm grain. The camera never cuts during flight: <b>readability beats cinema</b> in an aiming game.</p>
+        <p class="prose">A truly 3D city seen through a perspective long lens holding the classic side-on frame — building lanes at real depth, true parallax as the camera breathes. Warm filmic tone curve, gentle vignette, fine 35&nbsp;mm grain. The camera never cuts during flight: <b>readability beats cinema</b> in an aiming game.</p>
+      </div>
+      <div>
+        <h3 class="subhead">Real light, real shaders</h3>
+        <p class="prose">One physically-driven sun/moon (`DirectionalLight3D`) positioned by the round's clock, cascaded shadows raking the skyline, real-time GI so windows, craters, and explosions genuinely illuminate their surroundings. Volumetric fog, SSR wet roofs in rain, heat shimmer on blasts. <b>Nothing painted in that the light rig should be doing.</b></p>
+      </div>
+      <div>
+        <h3 class="subhead">Procedural city as gameplay</h3>
+        <p class="prose">Every round rolls a new throw-plane skyline — widths, heights, slope profile, materials — with at least one guaranteed subtle interceptor and a solver pass proving both players keep viable throws. Craters persist, so the round's misses become the round's terrain. <b>No two duels play the same.</b></p>
       </div>
       <div>
         <h3 class="subhead">Motion principles</h3>
@@ -994,7 +1004,7 @@ y = v·sinθ·t − ½g·t²</pre>
     <div class="col2">
       <div>
         <h3 class="subhead">Engine decisions</h3>
-        <p class="prose">GDScript for flow and UI; the simulation core in a typed, engine-independent module so async matches and replays stay bit-exact. Game Center and StoreKit through Godot's Apple plugins, validated in the first milestone. iPhone, iPad, and Mac use official export templates; <b>tvOS has no official Godot export</b> — the community port gets an M0 spike, with an iPhone/iPad/Mac-first launch as the fallback plan.</p>
+        <p class="prose">GDScript for flow and UI; the simulation core in a typed, engine-independent module so async matches and replays stay bit-exact. Lighting is real, not faked: `DirectionalLight3D` sun/moon from the round's clock, cascaded shadows, SDFGI on Mac and high-tier devices with baked GI + SSAO on mobile, volumetric fog for weather. Game Center and StoreKit through Godot's Apple plugins, validated in the first milestone. iPhone, iPad, and Mac use official export templates; <b>tvOS has no official Godot export</b> — the community port gets an M0 spike, with an iPhone/iPad/Mac-first launch as the fallback plan.</p>
       </div>
       <div>
         <h3 class="subhead">The base asset</h3>
