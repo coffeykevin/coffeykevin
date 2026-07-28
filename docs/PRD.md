@@ -167,10 +167,11 @@ rules — facts — and are re-implemented from scratch in Swift.
      this is sacred to the original; classic velocity values accepted).
    - Previous shot's values are pre-filled, exactly like the original's
      muscle-memory iteration loop.
-3. **Fire.** The gorilla shoulders its **banana launcher** (per the approved
-   concept art): brace, recoil, muzzle smoke; the banana leaves the tube at
-   the configured angle/power, spinning end-over-end (the original's 4-frame
-   rotation, now continuous).
+3. **Throw.** The gorilla **throws the banana by hand** — full
+   anticipation-windup-release animation with real weight shift; the banana
+   leaves the hand at the configured angle/power, spinning end-over-end
+   (the original's 4-frame rotation, now continuous). No weapons, no
+   launchers — bare-handed, exactly like 1991.
 4. **Flight.** Camera stays locked side-on (no cinematic cuts — readability
    first). Banana arcs under gravity + wind. Sun reacts if crossed.
 5. **Resolution.**
@@ -193,7 +194,9 @@ rules — facts — and are re-implemented from scratch in Swift.
 - Gravity presets: Moon 1.6 / Earth 9.8 (default) / Jupiter 24.8 / custom
   slider 1–30.
 - Wind per original: `rand(10)−5` with gust amplification chance; a
-  "Calm skies" toggle for teaching mode.
+  "Calm skies" toggle for teaching mode. Optional "Weather wind" setting
+  couples the roll's distribution to the round's weather condition (§9),
+  always within the classic bounds; off by default.
 - Collision: signed-distance field over the destructible skyline; banana is a
   point with small radius, gorillas have generous-but-fair capsule hitboxes.
 
@@ -285,12 +288,34 @@ gesture-only inputs); see §13.
   so 3D buildings read as 3D without breaking the classic silhouette).
   Slight parallax on background layers; gentle push-in on resolution moments
   only.
-- **Rendering target:** photoreal **golden hour over a New-York-inspired
-  city**, per the approved concept art. Low warm sun (~3,000 K) backlighting
-  the skyline; storm-grey cloud deck above an amber haze horizon; long
-  shadows; scattered warm interior windows in shadowed facades; filmic tone
-  curve and fine grain. The classic EGA palette survives as the UI accent
-  system and as the unlockable "CGA Dream" skin.
+- **Rendering target:** photoreal **New-York-inspired city under a dynamic
+  weather and lighting system**, per the approved concept art. Filmic tone
+  curve and fine grain throughout. The classic EGA palette survives as the
+  UI accent system and as the unlockable "CGA Dream" skin.
+- **Weather & time-of-day system (randomized per round):** each round rolls
+  a condition and a clock time from the match seed (deterministic, so async
+  opponents see the identical sky). Nine launch conditions, per concept:
+
+  | Condition | Reference time | Lighting notes |
+  |---|---|---|
+  | Clear Day | 2:00 PM | High sun, crisp shadows, blue sky, white cumulus |
+  | Cloudy | 3:15 PM | Flat grey diffuse light, muted palette |
+  | Rain | 4:50 PM | Streaking rain, wet-roof specular, misted distance |
+  | Storm | 5:30 PM | Near-dark, ambient lightning strikes, wild cloud deck |
+  | Sunset | 7:45 PM | Ember sky, silhouetted skyline, warm rim light |
+  | Clear Night | 11:30 PM | Star field, lit windows dominant, cool moonlight |
+  | Morning | 6:30 AM | Low gold sun disc, long soft shadows, amber haze |
+  | Foggy | 8:10 AM | Heavy fog, skyline dissolves with distance |
+  | Snow | 9:20 AM | Falling snow, accumulation on parapets and rooftops |
+
+  Rules: weather is **presentation-first** — the physics model never changes.
+  The only permitted gameplay coupling is an optional "Weather wind" match
+  setting that skews the classic wind roll's distribution to fit the sky
+  (storm → wilder rolls, calm day → milder) while staying strictly within
+  the original bounds; off by default. Fog and rain reduce *visual* contrast
+  of the far skyline, never hit detection. Lightning and snow accumulation
+  are ambient. The HUD always states condition and time (e.g. "STORM ·
+  5:30 PM") so variance reads as a feature, not a bug.
 - **Skyline:** procedural per §2 rules, staged in depth: hazy backlit
   landmark layer (an Empire-State-class spire, distant towers), a mid layer
   of dense tenement rooftops with chimneys, parapets, and a trestle-mounted
@@ -300,23 +325,21 @@ gesture-only inputs); see §13.
 - **Destruction:** volumetric chunk removal with persistent craters exposing
   interior floors (desks, a sad water cooler — one readable gag per interior,
   never noisy).
-- **Backdrop:** golden-hour sky — storm-grey clouds breaking into warm amber
-  glow, the sun low and off-frame so the whole city is rim-lit. The classic
-  sun-with-a-face (**Sol**) moves to the "CGA Dream" cosmetic skin and as an
-  easter egg (flying a banana through the sun's screen position in any skin
-  still triggers a hidden reaction) — the photoreal sky itself stays clean.
-- **Time/weather variants (cosmetic unlocks):** Golden Hour (default),
-  Blue Hour (dusk, tungsten windows dominant), Overcast Drizzle, and
-  CGA Dream (the one stylized skin, as a wink to 1991 — Sol included).
+- **Backdrop:** driven by the weather system above — one skyline, nine
+  skies. The classic sun-with-a-face (**Sol**) lives in the "CGA Dream"
+  cosmetic skin and as an easter egg (flying a banana through the sun or
+  moon's screen position in any sky still triggers a hidden reaction) —
+  the photoreal skies themselves stay clean.
 - **Gorillas:** two hero characters, **Kilo** (left, signal-yellow accents)
   and **Newton** (right, signal-cyan accents), matching the HUD's Power and
-  Angle colors. Photoreal builds, seated at the parapet with their **banana
-  launchers** shouldered; full strand-groom fur on Mac/high-tier devices,
-  baked shell cards elsewhere; warm golden rim light off the fur is the
-  scene's signature image. Animation set: idle sway + launcher checks,
-  shoulder-brace-fire with recoil and muzzle smoke, duck/flinch on
-  near-miss, defeat ragdoll-to-sit, and the sacred **chest-beat victory
-  dance** — motion-designed, 3 escalating loops.
+  Angle colors. Photoreal builds who **throw bananas bare-handed** from a
+  powerful standing windup — no weapons. Full strand-groom fur on
+  Mac/high-tier devices, baked shell cards elsewhere; fur and rim light
+  respond to the active weather (golden rim at sunset, wet matting in rain,
+  snow dusting in winter rounds). Animation set: idle sway + knuckle taps,
+  windup-throw with full weight shift, duck/flinch on near-miss, defeat
+  ragdoll-to-sit, and the sacred **chest-beat victory dance** —
+  motion-designed, 3 escalating loops.
 
 Full art direction with mockups: `mockup/index.html`.
 
@@ -342,12 +365,14 @@ Full art direction with mockups: `mockup/index.html`.
 2. **Match setup:** players (hot-seat names, exactly like the original's
    name prompts), points to win, gravity, wind, city size.
 3. **In-game (per approved concept):** dark-charcoal HUD floating over the
-   scene — top-center **wind pill** ("WIND → 23 MPH"), menu button top-left,
-   emote/chat button top-right (async matches); floating player name tags
-   with pointer triangles above each gorilla (yellow P1, cyan P2); bottom
-   control bar with segmented **POWER** meter (yellow, 0–100), central
-   circular **FIRE** button, and segmented **ANGLE** meter (cyan, 0–90),
-   readouts tappable for typed entry.
+   scene — condition + time label top-left ("STORM · 5:30 PM"), menu button
+   and emote/chat button in the top corners; full-width bottom bar reading
+   **PLAYER 1 · POWER · WIND · ANGLE · PLAYER 2**: player names in their
+   colors (yellow/cyan) with score pips at the ends, segmented POWER meter
+   (0–100) and ANGLE meter (0–90), and the wind readout ("WIND → 23 MPH")
+   at dead center. Readouts are tappable for typed entry; the throw itself
+   fires from the active gorilla (tap-and-hold the gorilla, Return on Mac,
+   A on controller) so the bar stays symmetric.
 4. **Debrief overlay** (§7.3) between throws.
 5. **Match end:** victory dance stage, stats card (accuracy, best throw,
    wind drama), rematch / swap sides / done.

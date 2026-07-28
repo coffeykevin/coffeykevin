@@ -53,9 +53,9 @@ without the name being on the box.
   terms used correctly and casually ("Apex: 41 m. Wind ate 9 of them.").
   Never zany, never corporate.
 - **Characters:** **Kilo** (yellow accents, left rooftop, showboat) and
-  **Newton** (cyan accents, right rooftop, methodical), each seated at the
-  parapet with a shouldered banana launcher. **Sol**, the classic
-  sun-with-a-face, survives as the star of the CGA Dream skin and a hidden
-  easter egg.
+  **Newton** (cyan accents, right rooftop, methodical), bare-handed banana
+  throwers with a full windup — no weapons, exactly like 1991. **Sol**, the
+  classic sun-with-a-face, survives as the star of the CGA Dream skin and a
+  hidden easter egg.
 - **Store positioning:** "A premium remake-in-spirit of the 1991 classic.
   One price. No ads. Couch duels on every Apple screen."

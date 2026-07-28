@@ -114,27 +114,41 @@
   .sq-btn.chat { right: 2%; }
   .sq-btn svg { position: static; width: 46%; height: 46%; }
 
-  .wind-pill {
-    position: absolute; left: 50%; transform: translateX(-50%); top: 4.5%;
-    display: flex; align-items: center; gap: clamp(5px, 0.8vw, 10px);
-    background: rgba(22, 25, 31, 0.88); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: clamp(6px, 1vw, 12px); padding: clamp(5px, 1vw, 12px) clamp(12px, 2vw, 24px);
-    font-family: var(--display); box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  .wx-chip {
+    position: absolute; left: 2%; top: 4.5%; margin-left: calc(clamp(22px, 3.6vw, 42px) + 10px);
+    display: grid; gap: 1px; align-content: center;
+    font-family: var(--display); color: #FFFFFF;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.6);
   }
-  .wind-pill .w-lbl { font-size: clamp(8px, 1.15vw, 14px); font-weight: 700; letter-spacing: 0.14em; color: #C9CBD1; }
-  .wind-pill .w-arrow { color: #FFFFFF; font-size: clamp(9px, 1.3vw, 16px); }
-  .wind-pill .w-val { font-size: clamp(11px, 1.6vw, 20px); font-weight: 800; color: #FFFFFF; font-variant-numeric: tabular-nums; }
-  .wind-pill .w-unit { font-size: clamp(7px, 1vw, 12px); font-weight: 600; letter-spacing: 0.1em; color: #C9CBD1; }
+  .wx-chip .c { font-size: clamp(8px, 1.2vw, 15px); font-weight: 800; letter-spacing: 0.14em; }
+  .wx-chip .t { font-size: clamp(7px, 0.95vw, 12px); font-weight: 600; color: #D8DADF; letter-spacing: 0.06em; }
 
   .ctrl-bar {
-    position: absolute; left: 50%; transform: translateX(-50%); bottom: 4%;
-    width: 66%;
+    position: absolute; left: 1.5%; right: 1.5%; bottom: 3.5%;
     background: linear-gradient(180deg, rgba(30, 34, 41, 0.92), rgba(18, 21, 26, 0.94));
     border: 1px solid rgba(255,255,255,0.09); border-radius: clamp(8px, 1.4vw, 16px);
     box-shadow: 0 10px 34px rgba(0,0,0,0.55);
-    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-    gap: clamp(8px, 1.6vw, 22px); padding: clamp(6px, 1.2vw, 16px) clamp(10px, 1.8vw, 24px);
+    display: grid; grid-template-columns: auto 1fr auto 1fr auto; align-items: center;
+    gap: clamp(8px, 1.8vw, 26px); padding: clamp(6px, 1.2vw, 15px) clamp(10px, 2vw, 28px);
   }
+  .bar-name { display: grid; gap: clamp(2px, 0.4vw, 5px); justify-items: start; }
+  .bar-name .nm { font-size: clamp(9px, 1.4vw, 17px); font-weight: 800; letter-spacing: 0.1em; }
+  .bar-name.pl1 .nm { color: var(--banana); }
+  .bar-name.pl2 .nm { color: var(--cyan); }
+  .bar-name.pl2 { justify-items: end; }
+  .bar-name .pips { display: flex; gap: 4px; }
+  .bar-name .pip { width: clamp(4px, 0.55vw, 7px); aspect-ratio: 1; border-radius: 50%; border: 1px solid #5A5E66; }
+  .bar-name.pl1 .pip.on { background: var(--banana); border-color: transparent; }
+  .bar-name.pl2 .pip.on { background: var(--cyan); border-color: transparent; }
+  .bar-wind {
+    display: flex; align-items: center; gap: clamp(5px, 0.8vw, 10px);
+    border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);
+    padding: clamp(3px, 0.6vw, 8px) clamp(10px, 1.8vw, 24px);
+  }
+  .bar-wind .w-lbl { font-size: clamp(7px, 1vw, 13px); font-weight: 700; letter-spacing: 0.14em; color: #C9CBD1; }
+  .bar-wind .w-arrow { color: #FFFFFF; font-size: clamp(9px, 1.3vw, 16px); }
+  .bar-wind .w-val { font-size: clamp(11px, 1.6vw, 20px); font-weight: 800; color: #FFFFFF; font-variant-numeric: tabular-nums; }
+  .bar-wind .w-unit { font-size: clamp(6px, 0.9vw, 11px); font-weight: 600; letter-spacing: 0.1em; color: #C9CBD1; }
   .meter-group { display: grid; grid-template-columns: auto 1fr; gap: clamp(6px, 1.2vw, 16px); align-items: center; }
   .meter-group.right { direction: rtl; }
   .meter-group.right > * { direction: ltr; }
@@ -158,14 +172,29 @@
     background: repeating-linear-gradient(90deg, var(--cyan) 0 4px, transparent 4px 7px);
   }
   .mg-scale { display: flex; justify-content: space-between; font-family: var(--mono); font-size: clamp(6px, 0.8vw, 10px); color: #6E7178; }
-  .fire-btn {
-    width: clamp(38px, 7vw, 86px); aspect-ratio: 1; border-radius: 50%;
-    background: radial-gradient(circle at 50% 38%, #2E333B, #14171C 72%);
-    border: 2px solid rgba(255,255,255,0.12);
-    box-shadow: 0 0 0 clamp(3px, 0.6vw, 7px) rgba(12, 14, 18, 0.85), 0 6px 20px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.08);
-    display: flex; align-items: center; justify-content: center;
-    color: #FFFFFF; font-weight: 800; letter-spacing: 0.14em; font-size: clamp(8px, 1.3vw, 16px);
+  /* ============ weather grid ============ */
+  .wx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 32px; }
+  .wx-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+  .wx-scene { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+  .wx-scene svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .wx-fx { position: absolute; inset: 0; pointer-events: none; }
+  .wx-fx.rain { background: repeating-linear-gradient(105deg, transparent 0 9px, rgba(210, 224, 236, 0.28) 9px 10px); }
+  .wx-fx.snow {
+    background-image:
+      radial-gradient(circle 1.6px at 12% 22%, #FFF 98%, transparent), radial-gradient(circle 1.2px at 34% 58%, #FFF 98%, transparent),
+      radial-gradient(circle 1.8px at 55% 30%, #FFF 98%, transparent), radial-gradient(circle 1.2px at 72% 66%, #FFF 98%, transparent),
+      radial-gradient(circle 1.6px at 88% 40%, #FFF 98%, transparent), radial-gradient(circle 1.2px at 22% 78%, #FFF 98%, transparent),
+      radial-gradient(circle 1.5px at 64% 84%, #FFF 98%, transparent), radial-gradient(circle 1.2px at 44% 12%, #FFF 98%, transparent),
+      radial-gradient(circle 1.4px at 80% 14%, #FFF 98%, transparent);
+    opacity: 0.9;
   }
+  .wx-fx.fog { background: linear-gradient(180deg, rgba(214, 218, 221, 0.55), rgba(196, 202, 206, 0.8)); }
+  .wx-fx.haze { background: linear-gradient(0deg, rgba(242, 206, 140, 0.35), transparent 60%); }
+  .wx-label { position: absolute; left: 10px; top: 8px; color: #FFF; text-shadow: 0 1px 5px rgba(0,0,0,0.65); }
+  .wx-label .c { font-size: 12px; font-weight: 800; letter-spacing: 0.12em; display: block; }
+  .wx-label .t { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.85); }
+  .wx-meta { padding: 10px 12px; }
+  .wx-meta p { font-size: 12.5px; color: var(--ink-dim); }
 
   .annot-grid { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
   .annot { display: flex; gap: 12px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
@@ -285,7 +314,7 @@
       </svg>
     </div>
     <p class="tagline">Angle<b> · </b>Power<b> · </b>Bananas</p>
-    <p class="hero-sub">A premium 3D reinterpretation of the 1991 QBasic artillery classic — same two-number soul, restaged as a photoreal golden-hour city where two gorillas trade banana fire across the rooftops, with a physics overlay that explains every shot.</p>
+    <p class="hero-sub">A premium 3D reinterpretation of the 1991 QBasic artillery classic — same two-number soul, restaged as a photoreal city with randomized weather and time-of-day skies, where two gorillas hurl bananas across the rooftops and a physics overlay explains every throw.</p>
     <div class="badge-row">
       <span class="badge">iPhone</span><span class="badge">iPad</span><span class="badge">Mac</span><span class="badge">Apple&nbsp;TV</span>
       <span class="badge gold">$4.99 · No ads · No IAP</span>
@@ -318,7 +347,7 @@ y = v·sinθ·t − ½g·t²</pre>
         <div class="keep-item"><span class="k kept">Kept</span><p><b>Angle + power input</b> — two typed numbers remain first-class on every platform. Power 0–100 maps linearly onto the classic velocity range, so 1991 muscle memory transfers.</p></div>
         <div class="keep-item"><span class="k kept">Kept</span><p><b>The exact physics</b> — gravity 9.8 default, quadratic wind drift, the original trajectory equations in a deterministic custom integrator.</p></div>
         <div class="keep-item"><span class="k kept">Kept</span><p><b>Destructible skyline and the chest-beat victory dance</b> — the whole liturgy. Sol the sun survives in the CGA Dream skin and as an easter egg.</p></div>
-        <div class="keep-item"><span class="k new">New</span><p><b>Photoreal golden hour</b> — a New-York-inspired skyline backlit by low sun, gorillas seated at the parapet with shouldered banana launchers, muzzle smoke and all.</p></div>
+        <div class="keep-item"><span class="k new">New</span><p><b>Photoreal city, nine skies</b> — a New-York-inspired skyline under randomized weather and time-of-day lighting, from clear noon to lightning storms to snow. The gorillas still throw bare-handed, exactly like 1991.</p></div>
         <div class="keep-item"><span class="k new">New</span><p><b>The physics overlay</b> — every shot visually explained: vector decomposition, apex, wind drift. Learning replaces dying.</p></div>
       </div>
     </div>
@@ -329,11 +358,11 @@ y = v·sinθ·t − ½g·t²</pre>
 <section>
   <div class="wrap">
     <p class="eyebrow">02 · Gameplay mockup</p>
-    <h2 class="section-title">The duel, mid-shot</h2>
-    <p class="lede">iPad landscape, Kilo's shot away. Golden hour over the city — storm clouds breaking into amber haze, a backlit landmark spire, a trestle water tower — and the charcoal HUD floating <b>above</b> the world, never dressed into it.</p>
+    <h2 class="section-title">The duel, mid-throw</h2>
+    <p class="lede">iPad landscape, sunset round, Kilo's throw away — full follow-through, banana on its white dotted arc. The weather system rolled "SUNSET · 7:45 PM" for this round; the charcoal HUD floats <b>above</b> the world, never dressed into it.</p>
 
     <div class="stage-outer">
-      <div class="stage" role="img" aria-label="High-fidelity gameplay mockup: golden-hour city skyline, two gorillas seated on rooftops with banana launchers, a banana mid-flight on a white dotted arc, wind pill at top, POWER-FIRE-ANGLE control bar at bottom">
+      <div class="stage" role="img" aria-label="High-fidelity gameplay mockup: sunset city skyline, two gorillas standing on rooftops, one in full throwing follow-through, a banana mid-flight on a white dotted arc, weather label reading Sunset 7:45 PM, and a full-width control bar reading Kilo, Power, Wind, Angle, Newton">
         <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <defs>
             <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
@@ -539,106 +568,82 @@ y = v·sinθ·t − ½g·t²</pre>
             <rect x="1044" y="515" width="13" height="20" fill="#FFD98A" opacity="0.55"/>
           </g>
 
-          <!-- ===== trajectory: white dots + banana ===== -->
+          <!-- ===== trajectory: white dots from the hand + banana ===== -->
           <g fill="#FFFFFF">
-            <circle cx="243" cy="277" r="2.6" opacity="0.5"/>
-            <circle cx="270" cy="252" r="2.8" opacity="0.55"/>
-            <circle cx="300" cy="228" r="3" opacity="0.6"/>
-            <circle cx="333" cy="206" r="3.2" opacity="0.65"/>
-            <circle cx="369" cy="187" r="3.4" opacity="0.7"/>
-            <circle cx="408" cy="171" r="3.6" opacity="0.75"/>
-            <circle cx="449" cy="158" r="3.8" opacity="0.8"/>
-            <circle cx="492" cy="149" r="4" opacity="0.85"/>
-            <circle cx="536" cy="143" r="4.2" opacity="0.9"/>
-            <circle cx="580" cy="141" r="4.4" opacity="0.95"/>
+            <circle cx="262" cy="224" r="2.6" opacity="0.5"/>
+            <circle cx="288" cy="204" r="2.8" opacity="0.55"/>
+            <circle cx="318" cy="186" r="3" opacity="0.6"/>
+            <circle cx="352" cy="171" r="3.2" opacity="0.65"/>
+            <circle cx="390" cy="158" r="3.4" opacity="0.7"/>
+            <circle cx="430" cy="148" r="3.6" opacity="0.75"/>
+            <circle cx="472" cy="141" r="3.8" opacity="0.8"/>
+            <circle cx="516" cy="137" r="4" opacity="0.85"/>
+            <circle cx="560" cy="136" r="4.2" opacity="0.9"/>
           </g>
           <!-- banana mid-flight, golden lit -->
-          <g transform="translate(625, 142) rotate(14)">
+          <g transform="translate(605, 138) rotate(14)">
             <path d="M -20 2 Q 0 19 20 2 Q 0 8 -20 2 Z" fill="url(#bananaG)" stroke="#A97812" stroke-width="0.9"/>
             <path d="M -15 3.5 Q 0 13 13 4" fill="none" stroke="#FFF3CC" stroke-width="1.4" opacity="0.8"/>
             <circle cx="18" cy="2.6" r="1.8" fill="#7A5A10"/>
           </g>
 
-          <!-- ===== physics overlay (crisp UI, toggleable) ===== -->
+          <!-- ===== physics overlay (crisp UI, toggleable) — anchored to the release point ===== -->
           <g font-family="ui-monospace, Menlo, monospace">
-            <line x1="228" y1="290" x2="298" y2="290" stroke="#FFFFFF" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>
-            <polygon points="304,290 295,286.5 295,293.5" fill="#FFFFFF" opacity="0.55"/>
-            <text x="252" y="306" fill="#FFFFFF" font-size="11" opacity="0.75">v·cosθ 50</text>
-            <line x1="228" y1="290" x2="228" y2="216" stroke="#FFFFFF" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>
-            <polygon points="228,210 224.5,219 231.5,219" fill="#FFFFFF" opacity="0.55"/>
-            <text x="222" y="226" fill="#FFFFFF" font-size="11" opacity="0.75" text-anchor="end">v·sinθ 46</text>
-            <line x1="228" y1="290" x2="292" y2="222" stroke="#FFC93C" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="298,215 284,220 291,229" fill="#FFC93C"/>
-            <text x="304" y="212" fill="#FFC93C" font-size="12" font-weight="bold">P = 68</text>
-            <path d="M 258 290 A 30 30 0 0 0 249 268" fill="none" stroke="#35C4F0" stroke-width="1.6" opacity="0.95"/>
-            <text x="264" y="274" fill="#35C4F0" font-size="11.5">42°</text>
+            <line x1="240" y1="242" x2="310" y2="242" stroke="#FFFFFF" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>
+            <polygon points="316,242 307,238.5 307,245.5" fill="#FFFFFF" opacity="0.55"/>
+            <text x="264" y="258" fill="#FFFFFF" font-size="11" opacity="0.75">v·cosθ 50</text>
+            <line x1="240" y1="242" x2="240" y2="168" stroke="#FFFFFF" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>
+            <polygon points="240,162 236.5,171 243.5,171" fill="#FFFFFF" opacity="0.55"/>
+            <text x="234" y="178" fill="#FFFFFF" font-size="11" opacity="0.75" text-anchor="end">v·sinθ 46</text>
+            <line x1="240" y1="242" x2="304" y2="174" stroke="#FFC93C" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="310,167 296,172 303,181" fill="#FFC93C"/>
+            <text x="316" y="164" fill="#FFC93C" font-size="12" font-weight="bold">P = 68</text>
+            <path d="M 270 242 A 30 30 0 0 0 261 220" fill="none" stroke="#35C4F0" stroke-width="1.6" opacity="0.95"/>
+            <text x="276" y="226" fill="#35C4F0" font-size="11.5">42°</text>
           </g>
 
-          <!-- ===== gorillas: seated, launchers shouldered ===== -->
-          <!-- Kilo (left, just fired) -->
-          <g transform="translate(196, 298)">
-            <ellipse cx="6" cy="-2" rx="34" ry="5" fill="#000" opacity="0.4"/>
-            <!-- launcher tube at ~42° -->
-            <g transform="rotate(-42 22 -40)">
-              <rect x="10" y="-46" width="62" height="12" rx="3" fill="#3A3A38"/>
-              <rect x="10" y="-46" width="62" height="4" rx="2" fill="#6E6A60" opacity="0.9"/>
-              <rect x="66" y="-49" width="9" height="18" rx="2" fill="#2A2A28"/>
-              <rect x="24" y="-34" width="16" height="6" rx="2" fill="#242422"/>
-            </g>
-            <!-- muzzle smoke -->
-            <g filter="url(#soft2)" opacity="0.75">
-              <ellipse cx="66" cy="-84" rx="10" ry="7" fill="#EDE6D8"/>
-              <ellipse cx="76" cy="-94" rx="7" ry="5" fill="#E3D9C6" opacity="0.7"/>
-              <ellipse cx="85" cy="-102" rx="5" ry="4" fill="#D9CDB6" opacity="0.5"/>
-            </g>
-            <!-- seated body -->
+          <!-- ===== gorillas: standing, bare-handed throw ===== -->
+          <!-- Kilo (left, follow-through — banana just released toward the dots) -->
+          <g transform="translate(190, 298)">
+            <ellipse cx="4" cy="-2" rx="32" ry="5" fill="#000" opacity="0.4"/>
             <g filter="url(#furEdge)">
-              <path d="M -26 0 Q -34 -34 -14 -52 Q -2 -62 12 -56 Q 26 -48 24 -26 Q 30 -12 22 0 Z" fill="url(#gorBody)"/>
-              <path d="M -26 0 Q -18 -10 2 -8 Q 18 -8 22 0 Z" fill="#1A130E"/>
-              <circle cx="10" cy="-62" r="12" fill="url(#gorBody)"/>
-              <path d="M 14 -52 Q 26 -48 30 -38" fill="none" stroke="#241C15" stroke-width="9" stroke-linecap="round"/>
+              <!-- planted back leg + bent front leg -->
+              <path d="M -16 0 Q -20 -14 -12 -26" fill="none" stroke="#1C1510" stroke-width="11" stroke-linecap="round"/>
+              <path d="M 12 0 Q 16 -12 10 -24" fill="none" stroke="#1C1510" stroke-width="11" stroke-linecap="round"/>
+              <!-- torso leaning into the throw -->
+              <path d="M -20 -20 Q -26 -48 -6 -60 Q 10 -68 22 -56 Q 30 -44 22 -24 Q 8 -14 -20 -20 Z" fill="url(#gorBody)"/>
+              <!-- head, thrust forward -->
+              <circle cx="24" cy="-64" r="11" fill="url(#gorBody)"/>
+              <!-- throwing arm: extended up-forward toward the release point -->
+              <path d="M 20 -58 Q 34 -66 46 -54" fill="none" stroke="#241C15" stroke-width="9" stroke-linecap="round"/>
+              <!-- off arm swung down-back -->
+              <path d="M -16 -44 Q -28 -34 -26 -18" fill="none" stroke="#1C1510" stroke-width="9" stroke-linecap="round"/>
             </g>
-            <!-- golden rim light on back -->
-            <path d="M -24 -6 Q -31 -34 -12 -51" fill="none" stroke="#F2CE8C" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
-            <path d="M 1 -72 Q 10 -76 18 -70" fill="none" stroke="#F2CE8C" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
+            <!-- open hand at release -->
+            <circle cx="49" cy="-53" r="4.6" fill="#241C15"/>
+            <!-- golden rim light on the back -->
+            <path d="M -19 -22 Q -25 -48 -5 -59" fill="none" stroke="#F2CE8C" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 16 -73 Q 25 -77 32 -70" fill="none" stroke="#F2CE8C" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
+            <path d="M 22 -58 Q 36 -66 46 -55" fill="none" stroke="#F2CE8C" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
             <!-- face hint -->
-            <circle cx="16" cy="-63" r="1.6" fill="#F2CE8C" opacity="0.9"/>
-            <path d="M 12 -56 Q 17 -54 21 -56" fill="none" stroke="#0E0A07" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="29" cy="-65" r="1.6" fill="#F2CE8C" opacity="0.9"/>
+            <path d="M 26 -58 Q 30 -56 34 -58" fill="none" stroke="#0E0A07" stroke-width="2" stroke-linecap="round"/>
           </g>
-          <!-- Newton (right, aiming, mirrored) -->
-          <g transform="translate(1004, 308) scale(-1, 1)">
-            <ellipse cx="6" cy="-2" rx="34" ry="5" fill="#000" opacity="0.4"/>
-            <g transform="rotate(-42 22 -40)">
-              <rect x="10" y="-46" width="62" height="12" rx="3" fill="#3A3A38"/>
-              <rect x="10" y="-46" width="62" height="4" rx="2" fill="#6E6A60" opacity="0.9"/>
-              <rect x="66" y="-49" width="9" height="18" rx="2" fill="#2A2A28"/>
-              <rect x="24" y="-34" width="16" height="6" rx="2" fill="#242422"/>
-            </g>
+          <!-- Newton (right, weight back, sizing up his reply — mirrored) -->
+          <g transform="translate(1010, 308) scale(-1, 1)">
+            <ellipse cx="4" cy="-2" rx="32" ry="5" fill="#000" opacity="0.4"/>
             <g filter="url(#furEdge)">
-              <path d="M -26 0 Q -34 -34 -14 -52 Q -2 -62 12 -56 Q 26 -48 24 -26 Q 30 -12 22 0 Z" fill="url(#gorBody)"/>
-              <path d="M -26 0 Q -18 -10 2 -8 Q 18 -8 22 0 Z" fill="#1A130E"/>
-              <circle cx="10" cy="-62" r="12" fill="url(#gorBody)"/>
-              <path d="M 14 -52 Q 26 -48 30 -38" fill="none" stroke="#241C15" stroke-width="9" stroke-linecap="round"/>
+              <path d="M -14 0 Q -18 -14 -10 -26" fill="none" stroke="#1C1510" stroke-width="11" stroke-linecap="round"/>
+              <path d="M 14 0 Q 18 -12 12 -22" fill="none" stroke="#1C1510" stroke-width="11" stroke-linecap="round"/>
+              <path d="M -22 -18 Q -28 -44 -8 -58 Q 8 -66 20 -54 Q 28 -42 20 -22 Q 6 -12 -22 -18 Z" fill="url(#gorBody)"/>
+              <circle cx="18" cy="-62" r="11" fill="url(#gorBody)"/>
+              <!-- both arms down, knuckles planted -->
+              <path d="M 16 -48 Q 28 -36 26 -6" fill="none" stroke="#241C15" stroke-width="9" stroke-linecap="round"/>
+              <path d="M -16 -44 Q -26 -32 -24 -6" fill="none" stroke="#1C1510" stroke-width="9" stroke-linecap="round"/>
             </g>
-            <path d="M -24 -6 Q -31 -34 -12 -51" fill="none" stroke="#F2CE8C" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
-            <path d="M 1 -72 Q 10 -76 18 -70" fill="none" stroke="#F2CE8C" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
-            <circle cx="16" cy="-63" r="1.6" fill="#F2CE8C" opacity="0.9"/>
-          </g>
-
-          <!-- ===== player tags ===== -->
-          <g font-family="-apple-system, 'SF Pro Display', system-ui, sans-serif" font-weight="800" text-anchor="middle">
-            <text x="205" y="176" font-size="19" fill="#141414" stroke="#141414" stroke-width="4" letter-spacing="0.5" paint-order="stroke">KILO</text>
-            <text x="205" y="176" font-size="19" fill="#FFC93C" letter-spacing="0.5">KILO</text>
-            <polygon points="205,192 196,182 214,182" fill="#FFC93C" stroke="#141414" stroke-width="2"/>
-            <circle cx="196" cy="203" r="3.4" fill="#FFC93C" stroke="#141414" stroke-width="1.4"/>
-            <circle cx="205" cy="203" r="3.4" fill="#FFC93C" stroke="#141414" stroke-width="1.4"/>
-            <circle cx="214" cy="203" r="3.4" fill="none" stroke="#141414" stroke-width="1.4" opacity="0.7"/>
-            <text x="986" y="186" font-size="19" fill="#141414" stroke="#141414" stroke-width="4" letter-spacing="0.5" paint-order="stroke">NEWTON</text>
-            <text x="986" y="186" font-size="19" fill="#35C4F0" letter-spacing="0.5">NEWTON</text>
-            <polygon points="986,202 977,192 995,192" fill="#35C4F0" stroke="#141414" stroke-width="2"/>
-            <circle cx="977" cy="213" r="3.4" fill="#35C4F0" stroke="#141414" stroke-width="1.4"/>
-            <circle cx="986" cy="213" r="3.4" fill="none" stroke="#141414" stroke-width="1.4" opacity="0.7"/>
-            <circle cx="995" cy="213" r="3.4" fill="none" stroke="#141414" stroke-width="1.4" opacity="0.7"/>
+            <path d="M -21 -20 Q -27 -44 -7 -57" fill="none" stroke="#F2CE8C" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 10 -71 Q 19 -75 26 -68" fill="none" stroke="#F2CE8C" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
+            <circle cx="23" cy="-63" r="1.6" fill="#F2CE8C" opacity="0.9"/>
           </g>
 
           <!-- ===== grade ===== -->
@@ -654,10 +659,14 @@ y = v·sinθ·t − ½g·t²</pre>
           <div class="sq-btn chat">
             <svg viewBox="0 0 20 20"><path d="M 3 3 h 14 a 1.5 1.5 0 0 1 1.5 1.5 v 8 a 1.5 1.5 0 0 1 -1.5 1.5 h -7 l -4.5 4 v -4 h -2.5 a 1.5 1.5 0 0 1 -1.5 -1.5 v -8 a 1.5 1.5 0 0 1 1.5 -1.5 z" fill="#E8E9EC"/></svg>
           </div>
-          <div class="wind-pill">
-            <span class="w-lbl">WIND</span><span class="w-arrow">➡</span><span class="w-val">23</span><span class="w-unit">MPH</span>
+          <div class="wx-chip">
+            <span class="c">SUNSET</span><span class="t">7:45 PM</span>
           </div>
           <div class="ctrl-bar">
+            <div class="bar-name pl1">
+              <span class="nm">KILO</span>
+              <span class="pips"><span class="pip on"></span><span class="pip on"></span><span class="pip"></span></span>
+            </div>
             <div class="meter-group">
               <span class="mg-val">68</span>
               <div class="mg-stack">
@@ -666,7 +675,9 @@ y = v·sinθ·t − ½g·t²</pre>
                 <div class="mg-scale"><span>0</span><span>100</span></div>
               </div>
             </div>
-            <div class="fire-btn">FIRE</div>
+            <div class="bar-wind">
+              <span class="w-lbl">WIND</span><span class="w-arrow">➡</span><span class="w-val">23</span><span class="w-unit">MPH</span>
+            </div>
             <div class="meter-group right">
               <span class="mg-val">42°</span>
               <div class="mg-stack">
@@ -675,18 +686,168 @@ y = v·sinθ·t − ½g·t²</pre>
                 <div class="mg-scale"><span>0</span><span>90</span></div>
               </div>
             </div>
+            <div class="bar-name pl2">
+              <span class="nm">NEWTON</span>
+              <span class="pips"><span class="pip on"></span><span class="pip"></span><span class="pip"></span></span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="annot-grid">
-      <div class="annot"><span class="key" style="background: var(--hud); border: 1px solid rgba(255,255,255,0.2);"></span><div><h3>The charcoal control bar</h3><p>Segmented POWER meter (yellow, 0–100) and ANGLE meter (cyan, 0–90) flank a circular FIRE button. Tap either readout to type exact numbers — the 1991 ritual, kept sacred. Power maps linearly onto classic velocity.</p></div></div>
-      <div class="annot"><span class="key" style="background: #FFFFFF;"></span><div><h3>White dotted trace</h3><p>The banana leaves a trail of clean white dots — the classic trace, restaged. It persists after the shot as the ghost the next player aims against.</p></div></div>
-      <div class="annot"><span class="key" style="background: var(--banana);"></span><div><h3>Physics overlay, toggleable</h3><p>Launch vector in player color with faint v·cosθ / v·sinθ components at the muzzle. Full / Minimal / Off — the concept frame shows Minimal; Classic mode is pure 1991.</p></div></div>
-      <div class="annot"><span class="key" style="background: var(--haze);"></span><div><h3>Golden-hour staging</h3><p>Low warm sun backlights the landmark spire and water tower; storm clouds break into amber haze. Long shadows and rim-lit fur are the scene's signature image.</p></div></div>
-      <div class="annot"><span class="key" style="background: #3A3A38;"></span><div><h3>Banana launchers</h3><p>Gorillas sit at the parapet and shoulder-fire their launchers — brace, recoil, muzzle smoke. The launcher angle mirrors the ANGLE meter in real time.</p></div></div>
-      <div class="annot"><span class="key" style="background: var(--cyan);"></span><div><h3>Name tags &amp; score pips</h3><p>Floating tags with pointer triangles — yellow Kilo, cyan Newton, matching their meters — with round pips underneath. First to three.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--hud); border: 1px solid rgba(255,255,255,0.2);"></span><div><h3>The full-width control bar</h3><p>PLAYER 1 · POWER · WIND · ANGLE · PLAYER 2, per the concept. Names and score pips in player colors at the ends, segmented meters inboard, wind readout dead center. Tap any readout to type exact numbers — the 1991 ritual, kept sacred.</p></div></div>
+      <div class="annot"><span class="key" style="background: #241C15;"></span><div><h3>Bare-handed throws</h3><p>No weapons — the gorillas wind up and hurl the banana with their whole body, exactly like the original. Kilo is caught at full follow-through; the throw fires from the gorilla (tap-and-hold, Return on Mac, A on controller), keeping the bar symmetric.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--haze);"></span><div><h3>Weather &amp; time label</h3><p>Every round rolls a sky — "SUNSET · 7:45 PM" here. Condition and clock always read in the top-left so the variance feels like a feature, never a bug.</p></div></div>
+      <div class="annot"><span class="key" style="background: #FFFFFF;"></span><div><h3>White dotted trace</h3><p>The banana leaves a trail of clean white dots — the classic trace, restaged. It persists after the throw as the ghost the next player aims against.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--banana);"></span><div><h3>Physics overlay, toggleable</h3><p>Launch vector in player color with faint v·cosθ / v·sinθ components at the release point. Full / Minimal / Off — this frame shows Minimal; Classic mode is pure 1991.</p></div></div>
+      <div class="annot"><span class="key" style="background: var(--cyan);"></span><div><h3>Two numbers, always</h3><p>Power 0–100 maps linearly onto the classic velocity range and Angle mirrors the original degrees — 1991 muscle memory transfers untouched, whatever the sky is doing.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WEATHER & LIGHT ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">03 · Weather &amp; light</p>
+    <h2 class="section-title">One skyline, nine skies</h2>
+    <p class="lede">Every round rolls a weather condition and a clock time from the match seed — deterministic, so async opponents see the identical sky. Weather is <b>presentation-first</b>: the physics never change. The only coupling is an optional "Weather wind" setting that skews the classic wind roll to fit the sky, always within the original bounds.</p>
+
+    <div class="wx-grid">
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #3D7FC4, #7FB2DE 60%, #B9D6EA);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <ellipse cx="58" cy="22" rx="28" ry="7" fill="#FFFFFF" opacity="0.9"/>
+            <ellipse cx="186" cy="34" rx="22" ry="6" fill="#FFFFFF" opacity="0.75"/>
+            <g fill="#8FA6BC"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#55677A"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-label"><span class="c">CLEAR DAY</span><span class="t">2:00 PM</span></div>
+        </div>
+        <div class="wx-meta"><p>High sun, crisp shadows, white cumulus. The baseline read.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #5C3A66, #C75B3F 45%, #F2913F 70%, #F7BB6A);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <ellipse cx="120" cy="102" rx="95" ry="42" fill="#FFC97E" opacity="0.35"/>
+            <g fill="#3A2334"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#241722"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-label"><span class="c">SUNSET</span><span class="t">7:45 PM</span></div>
+        </div>
+        <div class="wx-meta"><p>Ember sky, silhouetted skyline, warm rim light on the fur.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #060B22, #12224A 70%, #1A2E5C);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <g fill="#EAF0FF"><circle cx="24" cy="18" r="1"/><circle cx="70" cy="10" r="0.8"/><circle cx="108" cy="22" r="1.1"/><circle cx="160" cy="12" r="0.9"/><circle cx="206" cy="24" r="1"/><circle cx="184" cy="48" r="0.8"/><circle cx="40" cy="42" r="0.8"/></g>
+            <g fill="#16223D"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#0C1526"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFD98A"><rect x="55" y="112" width="4" height="6" opacity="0.9"/><rect x="70" y="124" width="4" height="6" opacity="0.7"/><rect x="96" y="122" width="4" height="6" opacity="0.8"/><rect x="10" y="102" width="5" height="7" opacity="0.9"/><rect x="26" y="118" width="5" height="7" opacity="0.6"/><rect x="212" y="106" width="5" height="7" opacity="0.85"/><rect x="226" y="122" width="5" height="7" opacity="0.6"/><rect x="153" y="118" width="4" height="6" opacity="0.75"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-label"><span class="c">CLEAR NIGHT</span><span class="t">11:30 PM</span></div>
+        </div>
+        <div class="wx-meta"><p>Star field, lit windows dominant, cool moonlight. Banana glows.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #79838C, #98A1A8 60%, #ADB4B9);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <ellipse cx="70" cy="20" rx="40" ry="9" fill="#5E6870" opacity="0.7"/>
+            <ellipse cx="180" cy="30" rx="36" ry="8" fill="#68727A" opacity="0.6"/>
+            <g fill="#6A757E"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#454F58"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-label"><span class="c">CLOUDY</span><span class="t">3:15 PM</span></div>
+        </div>
+        <div class="wx-meta"><p>Flat diffuse light, muted palette — the moody duel.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #525C66, #6E7881 60%, #7E8890);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <g fill="#47515B"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#303A44"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFD98A" opacity="0.7"><rect x="10" y="102" width="5" height="7"/><rect x="212" y="106" width="5" height="7"/><rect x="96" y="122" width="4" height="6"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-fx rain"></div>
+          <div class="wx-label"><span class="c">RAIN</span><span class="t">4:50 PM</span></div>
+        </div>
+        <div class="wx-meta"><p>Streaking rain, wet-roof specular, misted distance. Fur mats down.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #171C28, #2A3242 55%, #3A4254);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <path d="M 150 6 L 138 44 L 148 42 L 130 84" fill="none" stroke="#B9C4E8" stroke-width="5" opacity="0.35"/>
+            <path d="M 150 6 L 138 44 L 148 42 L 130 84" fill="none" stroke="#EAF0FF" stroke-width="2" opacity="0.95"/>
+            <g fill="#202836"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#12161E"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFD98A" opacity="0.8"><rect x="10" y="102" width="5" height="7"/><rect x="26" y="118" width="5" height="7"/><rect x="212" y="106" width="5" height="7"/><rect x="55" y="112" width="4" height="6"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-label"><span class="c">STORM</span><span class="t">5:30 PM</span></div>
+        </div>
+        <div class="wx-meta"><p>Near-dark, ambient lightning. "Weather wind" skews rolls wilder here.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #AEB4B8, #C2C8CB);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <g fill="#98A0A6" opacity="0.55"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#7B858C"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-fx fog"></div>
+          <div class="wx-label" style="color:#3A4248; text-shadow:none;"><span class="c">FOGGY</span><span class="t" style="color:#5A6268;">8:10 AM</span></div>
+        </div>
+        <div class="wx-meta"><p>The skyline dissolves with distance — visual challenge only, hitboxes untouched.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #A5756B, #E8B87E 55%, #F2D6A4);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <circle cx="172" cy="66" r="24" fill="#FFEFC4" opacity="0.35"/>
+            <circle cx="172" cy="66" r="12" fill="#FFEFC4"/>
+            <g fill="#8A7362"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#5C4A3C"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-fx haze"></div>
+          <div class="wx-label"><span class="c">MORNING</span><span class="t">6:30 AM</span></div>
+        </div>
+        <div class="wx-meta"><p>Low gold sun disc, long soft shadows, amber haze.</p></div>
+      </div>
+
+      <div class="wx-card">
+        <div class="wx-scene" style="background: linear-gradient(180deg, #6E7C8C, #93A1AE 60%, #B4C0CB);">
+          <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <g fill="#5A6878"><rect x="50" y="106" width="34" height="44"/><rect x="90" y="116" width="30" height="34"/><rect x="126" y="72" width="12" height="78"/><polygon points="128,72 136,72 132,56"/><rect x="131" y="48" width="2" height="9"/><rect x="148" y="112" width="22" height="38"/><rect x="180" y="84" width="24" height="18"/><polygon points="177,84 207,84 192,74"/><rect x="183" y="102" width="3" height="14"/><rect x="198" y="102" width="3" height="14"/></g>
+            <g fill="#3A4654"><rect x="0" y="94" width="42" height="56"/><rect x="204" y="98" width="36" height="52"/></g>
+            <g fill="#E8EEF4"><rect x="0" y="92" width="42" height="3"/><rect x="204" y="96" width="36" height="3"/><rect x="50" y="104" width="34" height="2.4"/><rect x="177" y="82" width="30" height="2.4"/><rect x="148" y="110" width="22" height="2.4"/></g>
+            <g fill="#FFFFFF"><circle cx="52" cy="56" r="1.6"/><circle cx="70" cy="46" r="1.7"/><circle cx="90" cy="39" r="1.8"/><circle cx="112" cy="35" r="1.9"/><circle cx="134" cy="34" r="2"/></g>
+            <g transform="translate(152,36) rotate(15)"><path d="M -7 1 Q 0 6.5 7 1 Q 0 3 -7 1 Z" fill="#FFC93C"/></g>
+          </svg>
+          <div class="wx-fx snow"></div>
+          <div class="wx-label"><span class="c">SNOW</span><span class="t">9:20 AM</span></div>
+        </div>
+        <div class="wx-meta"><p>Falling snow accumulates on parapets and the water-tower cap.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -694,13 +855,13 @@ y = v·sinθ·t − ½g·t²</pre>
 <!-- ================= DEBRIEF ================= -->
 <section>
   <div class="wrap">
-    <p class="eyebrow">03 · The physics overlay</p>
+    <p class="eyebrow">04 · The physics overlay</p>
     <h2 class="section-title">Every miss, explained</h2>
     <p class="lede">The original taught by punishment. Bananarc shows its work: after each shot the dotted trace stays ghosted with a debrief card, and the sentence “wind cost you 9 meters” is what makes players feel the model.</p>
 
     <div class="debrief-wrap">
       <div class="debrief-card" role="img" aria-label="Debrief card showing shot statistics including wind drift">
-        <div class="hd"><span class="who">● KILO</span><span class="n">SHOT 4 · ROUND 3</span></div>
+        <div class="hd"><span class="who">● KILO</span><span class="n">THROW 4 · ROUND 3</span></div>
         <div class="stat-rows">
           <div class="srow"><span class="l">Angle</span><span class="v">42°</span></div>
           <div class="srow"><span class="l">Power</span><span class="v">68</span></div>
@@ -724,9 +885,9 @@ y = v·sinθ·t − ½g·t²</pre>
       </div>
       <div class="debrief-copy">
         <div class="feature-list">
-          <div class="f"><h3>While aiming<span class="mono-tag">INTENT</span></h3><p>Launch vector at the muzzle with live component decomposition and a short windless ghost arc — enough to communicate shape, never the landing point. No aim assist, ever.</p></div>
+          <div class="f"><h3>While aiming<span class="mono-tag">INTENT</span></h3><p>Launch vector at the release point with live component decomposition and a short windless ghost arc — enough to communicate shape, never the landing point. No aim assist, ever.</p></div>
           <div class="f"><h3>During flight<span class="mono-tag">TRACE</span></h3><p>White dots behind the banana; a tangent velocity arrow shrinks vertically toward the apex and flips — projectile motion, performed.</p></div>
-          <div class="f"><h3>After the shot<span class="mono-tag">DEBRIEF</span></h3><p>The trace stays ghosted until the next player commits. The card compares actual landing vs. windless landing. Compare, adjust, fire again — the learning loop of the whole game.</p></div>
+          <div class="f"><h3>After the throw<span class="mono-tag">DEBRIEF</span></h3><p>The trace stays ghosted until the next player commits. The card compares actual landing vs. windless landing. Compare, adjust, throw again — the learning loop of the whole game.</p></div>
           <div class="f"><h3>Purist option<span class="mono-tag">CLASSIC</span></h3><p>Overlay verbosity: Full / Minimal / Off. Classic mode is 1991 with better fur.</p></div>
         </div>
       </div>
@@ -737,9 +898,9 @@ y = v·sinθ·t − ½g·t²</pre>
 <!-- ================= ART DIRECTION ================= -->
 <section>
   <div class="wrap">
-    <p class="eyebrow">04 · Art direction</p>
+    <p class="eyebrow">05 · Art direction</p>
     <h2 class="section-title">Golden hour over the city</h2>
-    <p class="lede">Per the approved concept: a photoreal New-York-inspired skyline at golden hour — storm clouds breaking into amber haze, a backlit landmark spire, brownstone rooftops — with a crisp charcoal HUD in yellow and cyan floating above it. <b>The 1991 EGA palette lives on as the unlockable CGA Dream skin.</b></p>
+    <p class="lede">Per the approved concept: one photoreal New-York-inspired skyline — landmark spire, trestle water tower, brownstone rooftops — relit by the weather system every round, with a crisp charcoal HUD in yellow and cyan floating above it. The swatches below are the sunset grade; each sky in §03 carries its own. <b>The 1991 EGA palette lives on as the unlockable CGA Dream skin.</b></p>
 
     <div class="pal-grid">
       <div class="pal"><div class="swatch" style="background:#4E5A68"></div><div class="meta"><div class="name">Storm Cloud</div><div class="hexes">#4E5A68</div></div></div>
@@ -758,8 +919,8 @@ y = v·sinθ·t − ½g·t²</pre>
       <div class="mat"><div class="chip-vis" style="background: linear-gradient(105deg, #EFD6A4, #B99666);"></div><div class="body"><h3>Backlit limestone</h3><p>The landmark spire reads almost luminous — sun-facing faces near-blown, shadow faces hazed into the sky. Atmosphere does the modeling.</p></div></div>
       <div class="mat"><div class="chip-vis" style="background: linear-gradient(90deg, #7A5A3C, #42301F);"></div><div class="body"><h3>Water-tower timber</h3><p>Weathered cedar staves, steel hoops, conical cap; the classic rooftop silhouette and a favorite thing to blow up.</p></div></div>
       <div class="mat"><div class="chip-vis" style="background: radial-gradient(circle at 38% 30%, #4A423A, #15100C 75%);"></div><div class="body"><h3>Gorilla fur</h3><p>Full strand groom on Mac/high tiers, shell cards elsewhere; golden rim light tracing the back and crown is the scene's signature.</p></div></div>
-      <div class="mat"><div class="chip-vis" style="background: linear-gradient(120deg, #FFE9A4, #C68F17);"></div><div class="body"><h3>Banana &amp; launcher</h3><p>Waxy subsurface banana with a clearcoat spin highlight; matte parkerized-steel launcher tube with worn edges and a leather strap.</p></div></div>
-      <div class="mat"><div class="chip-vis" style="background: linear-gradient(180deg, #46525F 0%, #C0A47E 60%, #EDC584 100%);"></div><div class="body"><h3>Light itself</h3><p>One low warm key (~3,000 K) raking across the city; storm-grey fill from the cloud deck; scattered tungsten windows in shadowed facades. Explosions punch holes in the calm.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: linear-gradient(120deg, #FFE9A4, #C68F17);"></div><div class="body"><h3>Banana wax</h3><p>Waxy subsurface warmth with a clearcoat highlight tracking the spin — the most-watched object in the game gets the most expensive shader, in every weather.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: linear-gradient(180deg, #46525F 0%, #C0A47E 60%, #EDC584 100%);"></div><div class="body"><h3>Light itself</h3><p>One physically-driven sky rig, nine states: sun position from the round's clock time, cloud deck density from the condition, tungsten windows rising as light falls. Explosions punch holes in whatever calm the sky chose.</p></div></div>
     </div>
 
     <div class="col2">
@@ -769,17 +930,17 @@ y = v·sinθ·t − ½g·t²</pre>
       </div>
       <div>
         <h3 class="subhead">Motion principles</h3>
-        <p class="prose">Weight over snappiness: the launcher has real recoil, the gorillas brace before firing, smoke hangs in the golden air. Physics objects obey the simulation exactly; characters are hand-keyed against it. <b>Nothing pops — everything follows through.</b></p>
+        <p class="prose">Weight over snappiness: the gorillas coil and uncork the whole body into every throw, and weather answers — fur mats in rain, breath fogs in snow rounds. Physics objects obey the simulation exactly; characters are hand-keyed against it. <b>Nothing pops — everything follows through.</b></p>
       </div>
     </div>
 
     <h3 class="subhead" style="margin-top: 40px;">Character animation set (per gorilla)</h3>
     <div class="anim-beats">
-      <div class="beat"><span class="b-name">Idle</span><span class="b-t">loop 4 s</span><p>Seated weight-shift, launcher resting across the lap, occasional glance at the wind pill; fur rides the breeze.</p></div>
-      <div class="beat"><span class="b-name">Shoulder → fire</span><span class="b-t">1.4 s</span><p>Hoist, brace, tube tracks the ANGLE meter live, recoil kick + muzzle smoke synced to the simulation's launch frame. Power scales the recoil.</p></div>
+      <div class="beat"><span class="b-name">Idle</span><span class="b-t">loop 4 s</span><p>Weight-shift sway, knuckle taps on the parapet, occasional glance at the wind readout; fur rides whatever the weather sends.</p></div>
+      <div class="beat"><span class="b-name">Windup → throw</span><span class="b-t">1.4 s</span><p>Full-body coil — hips, shoulder, arm — release synced to the simulation's launch frame, held follow-through. Power scales the windup intensity; the arm angle tracks the ANGLE meter live.</p></div>
       <div class="beat"><span class="b-name">Near-miss flinch</span><span class="b-t">0.6 s</span><p>Duck behind the parapet when a banana lands within one building — comedy and feedback in one beat.</p></div>
       <div class="beat"><span class="b-name">Defeat</span><span class="b-t">1.8 s</span><p>Ragdoll blend to a seated slump against the chimney; dignity intact, rematch implied.</p></div>
-      <div class="beat"><span class="b-name">Victory dance</span><span class="b-t">3 loops</span><p>Launcher raised overhead, then the sacred chest-beat, escalating each loop; haptic thumps on every strike. This is the trailer shot.</p></div>
+      <div class="beat"><span class="b-name">Victory dance</span><span class="b-t">3 loops</span><p>Arms overhead, then the sacred chest-beat, escalating each loop; haptic thumps on every strike. This is the trailer shot.</p></div>
     </div>
   </div>
 </section>
@@ -787,7 +948,7 @@ y = v·sinθ·t − ½g·t²</pre>
 <!-- ================= PLATFORMS ================= -->
 <section>
   <div class="wrap">
-    <p class="eyebrow">05 · Every Apple screen</p>
+    <p class="eyebrow">06 · Every Apple screen</p>
     <h2 class="section-title">One purchase, four rooms</h2>
     <p class="lede">Universal Purchase across iPhone, iPad, Mac, and Apple TV. Same deterministic simulation everywhere — a shot is just a seed, an angle, and a power.</p>
     <div class="plat-grid">
@@ -810,7 +971,7 @@ y = v·sinθ·t − ½g·t²</pre>
           <svg viewBox="0 0 160 100" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true"><rect x="6" y="52" width="26" height="48" fill="#3C2820"/><rect x="40" y="68" width="22" height="32" fill="#8A7158"/><rect x="68" y="38" width="9" height="48" fill="#DDBC85"/><polygon points="70.5,38 74.5,38 72.5,26" fill="#D3B586"/><rect x="86" y="64" width="24" height="36" fill="#75604A"/><rect x="118" y="54" width="30" height="46" fill="#31211A"/><g fill="#FFFFFF"><circle cx="24" cy="46" r="1.1"/><circle cx="44" cy="34" r="1.2"/><circle cx="66" cy="26" r="1.3"/><circle cx="90" cy="23" r="1.4"/><circle cx="114" cy="26" r="1.4"/><circle cx="134" cy="34" r="1.3"/></g></svg>
         </div>
         <p class="os">macOS · NATIVE</p><h3>Mac</h3>
-        <p>Keyboard-first, exactly like 1991: type the angle, Tab, type the power, Return to fire. Scroll wheel fine-tunes. Full groom fur tier.</p>
+        <p>Keyboard-first, exactly like 1991: type the angle, Tab, type the power, Return to throw. Scroll wheel fine-tunes. Full groom fur tier.</p>
       </div>
       <div class="plat">
         <div class="frame" style="aspect-ratio: 16/9;">
@@ -826,7 +987,7 @@ y = v·sinθ·t − ½g·t²</pre>
 <!-- ================= BRAND ================= -->
 <section>
   <div class="wrap">
-    <p class="eyebrow">06 · Name &amp; brand</p>
+    <p class="eyebrow">07 · Name &amp; brand</p>
     <h2 class="section-title">Calling it Bananarc</h2>
     <p class="lede">"Gorillas" itself is a trademark minefield (an active delivery brand, Donkey Kong adjacency). The invented word <b>Bananarc</b> names the projectile and the physics in one breath — ownable, searchable, and it looks great mid-flight.</p>
 
