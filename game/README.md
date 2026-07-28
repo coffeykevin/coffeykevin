@@ -30,8 +30,14 @@ built on [Godot Engine 4.4](https://godotengine.org).
 
 - Drag the **POWER** / **ANGLE** sliders, or type exact numbers and press
   Enter in the fields (classic ritual).
-- **Throw:** Enter / Space, or click your gorilla.
+- **Throw:** Enter / Space, click your gorilla, or controller **A**.
+- **Game controller** (Xbox / DualSense / MFi): left stick = angle,
+  right stick or triggers = power, D-pad = ±1 steppers, A = throw.
 - Self-hits score for the opponent, exactly like 1991.
+
+To play on an Apple TV today, AirPlay the iPhone build with a controller
+paired — see [`../docs/DEPLOY.md`](../docs/DEPLOY.md#apple-tv) for the
+native tvOS plan.
 
 ## Tests
 

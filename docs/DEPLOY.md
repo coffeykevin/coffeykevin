@@ -106,6 +106,43 @@ screenshots) rent real Apple silicon by the hour:
 Avoid Hackintosh/OSX-KVM images on generic VPSes — macOS licensing only
 permits Apple hardware, and every legitimate provider above is exactly that.
 
+## Apple TV
+
+TestFlight exists on tvOS, so once a tvOS build exists, deployment is the
+same shape as iOS: archive → upload → install from the TestFlight app on
+the Apple TV. The blocker is upstream of us (PRD §15): **Godot has no
+official tvOS export target**, so there is currently no native tvOS
+binary to upload.
+
+**Play on your Apple TV today — AirPlay.** The iOS TestFlight build gets
+you couch play immediately:
+
+1. Install the build on your iPhone/iPad from TestFlight.
+2. Swipe into Control Center → Screen Mirroring → pick your Apple TV
+   (same Wi-Fi network), or AirPlay from the app switcher.
+3. Pair a game controller (Xbox/DualSense/MFi) to the *iPhone* —
+   the game has full controller support: left stick = angle, right
+   stick/triggers = power, D-pad = ±1 steppers, A = throw.
+
+Latency is fine for a turn-based artillery game — nothing in Bananarc is
+twitch-timed.
+
+**Native tvOS — the plan, in order:**
+
+1. **M0 spike** the community Godot tvOS port against 4.4; if it builds
+   the slice, add a `tvos-testflight.yml` mirroring the iOS workflow
+   (new App ID + tvOS provisioning profile, same certificate, same ASC
+   API key — only two new secrets).
+2. If the port isn't viable, evaluate patching Godot's iOS export to the
+   `appletvos` SDK ourselves (iOS and tvOS share most of the toolchain;
+   real engineering, weeks not days) or sponsoring upstream tvOS support.
+3. Fallback per the PRD: ship iPhone/iPad/Mac at launch, Apple TV as a
+   fast-follow — with AirPlay as the documented couch story until then.
+
+The game code itself is already tvOS-shaped: controller input with a
+discrete stepper path, 10-foot-legible HUD scaling, and no touch-only
+interactions.
+
 ## Notes
 
 - Build numbers auto-increment (`GITHUB_RUN_NUMBER`), so repeated uploads

@@ -230,6 +230,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("ui_accept"):
 		_throw()
+	elif event is InputEventJoypadButton and event.pressed:
+		# D-pad steppers: discrete input path required for tvOS/controllers
+		# (PRD section 8 - every control has a stepper path).
+		match event.button_index:
+			JOY_BUTTON_DPAD_UP:
+				_nudge_aim(1.0, 0.0)
+			JOY_BUTTON_DPAD_DOWN:
+				_nudge_aim(-1.0, 0.0)
+			JOY_BUTTON_DPAD_RIGHT:
+				_nudge_aim(0.0, 1.0)
+			JOY_BUTTON_DPAD_LEFT:
+				_nudge_aim(0.0, -1.0)
 	elif event is InputEventMouseButton and event.pressed \
 			and event.button_index == MOUSE_BUTTON_LEFT:
 		var origin := camera.project_ray_origin(event.position)
@@ -271,8 +283,36 @@ func _launch(angle: float, power: float) -> void:
 	banana.position = hand
 
 
+## Analog controller aiming: left stick = angle, right stick/triggers = power
+## (PRD section 8 controller mapping). Deadzoned; human turns only.
+func _poll_controller(delta: float) -> void:
+	if state != State.AIMING or _is_ai(current):
+		return
+	var da := 0.0
+	var dp := 0.0
+	var ly := Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
+	if absf(ly) > 0.25:
+		da = -ly * delta * 28.0
+	var ry := Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	if absf(ry) > 0.25:
+		dp = -ry * delta * 30.0
+	dp += Input.get_joy_axis(0, JOY_AXIS_TRIGGER_RIGHT) * delta * 30.0
+	dp -= Input.get_joy_axis(0, JOY_AXIS_TRIGGER_LEFT) * delta * 30.0
+	if da != 0.0 or dp != 0.0:
+		_nudge_aim(da, dp)
+
+
+func _nudge_aim(da: float, dp: float) -> void:
+	aim[current]["angle"] = clampf(aim[current]["angle"] + da, 0.0, 90.0)
+	aim[current]["power"] = clampf(aim[current]["power"] + dp, 1.0, 100.0)
+	hud.set_angle(aim[current]["angle"])
+	hud.set_power(aim[current]["power"])
+	_refresh_aim_visuals()
+
+
 func _process(delta: float) -> void:
 	_cam_t += delta
+	_poll_controller(delta)
 	if city != null and state != State.TITLE:
 		camera.position = _cam_center + Vector3(
 			sin(_cam_t * 0.13) * 0.6, sin(_cam_t * 0.09) * 0.35, 0.0)
