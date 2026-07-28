@@ -17,6 +17,9 @@ const GORILLA_RADIUS := 2.2
 var state: int = State.TITLE
 var vs_ai := false
 var autotest := false
+var shots_dir := ""
+var _snap_count := 0
+var _snap_timer := 0.0
 var match_seed := 0
 var round_index := 0
 var scores := [0, 0]
@@ -92,8 +95,9 @@ func _ready() -> void:
 	hud.mode_picked.connect(_on_mode_picked)
 	hud.rematch.connect(_on_rematch)
 
-	if autotest:
-		Engine.time_scale = 12.0
+	shots_dir = OS.get_environment("BANANARC_SHOTS")
+	if autotest or shots_dir != "":
+		Engine.time_scale = 4.0 if shots_dir != "" else 12.0
 		print("[AUTOTEST] starting fixed-seed AI-vs-AI match")
 		_on_mode_picked.call_deferred(true)
 	else:
@@ -166,7 +170,7 @@ func _begin_turn(msg: String) -> void:
 
 
 func _is_ai(p: int) -> bool:
-	if autotest:
+	if autotest or shots_dir != "":
 		return true
 	return vs_ai and p == 1
 
@@ -310,9 +314,27 @@ func _nudge_aim(da: float, dp: float) -> void:
 	_refresh_aim_visuals()
 
 
+## Screenshot capture mode (BANANARC_SHOTS=<dir>): AI-vs-AI match with a
+## frame saved every few seconds of game time — used to review the build
+## visually from a machine with no display attached.
+func _do_snap() -> void:
+	_snap_count += 1
+	var idx := _snap_count
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	img.save_png("%s/shot_%02d.png" % [shots_dir, idx])
+
+
 func _process(delta: float) -> void:
 	_cam_t += delta
 	_poll_controller(delta)
+	if shots_dir != "":
+		_snap_timer += delta
+		if _snap_timer >= 5.0 and _snap_count < 36:
+			_snap_timer = 0.0
+			_do_snap()
+		if _snap_count >= 36:
+			get_tree().quit()
 	if city != null and state != State.TITLE:
 		camera.position = _cam_center + Vector3(
 			sin(_cam_t * 0.13) * 0.6, sin(_cam_t * 0.09) * 0.35, 0.0)
@@ -391,7 +413,7 @@ func _score_hit(victim: int) -> void:
 		hud.show_end("%s WINS THE MATCH  %d–%d" % [
 			NAMES[scorer], scores[0], scores[1]], ACCENTS[scorer])
 		state = State.TITLE
-		if autotest:
+		if autotest or shots_dir != "":
 			print("[AUTOTEST] match over: %s wins %d-%d after %d throws — OK" % [
 				NAMES[scorer], scores[0], scores[1], throw_count])
 			get_tree().quit()

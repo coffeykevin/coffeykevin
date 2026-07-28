@@ -37,7 +37,7 @@ const CONDITIONS := [
 		"lightning": false, "lit": 0.35, "ambient": 0.9},
 	{"name": "FOGGY", "time": "8:10 AM", "elev": 25.0, "azim": -25.0,
 		"energy": 0.4, "sun": Color("d8dce0"), "top": Color("aeb4b8"),
-		"horizon": Color("c6ccd0"), "fog": 0.03, "precip": "none",
+		"horizon": Color("c6ccd0"), "fog": 0.014, "precip": "none",
 		"lightning": false, "lit": 0.25, "ambient": 1.2},
 	{"name": "SNOW", "time": "9:20 AM", "elev": 30.0, "azim": -25.0,
 		"energy": 0.6, "sun": Color("e8eef4"), "top": Color("6e7c8c"),
