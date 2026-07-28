@@ -918,7 +918,7 @@ y = v·sinθ·t − ½g·t²</pre>
       <div class="mat"><div class="chip-vis" style="background: repeating-linear-gradient(0deg, #4E3428 0 7px, #3C2820 7px 9px), #3C2820;"></div><div class="body"><h3>Brownstone &amp; brick</h3><p>Scan-based masonry, roughness ~0.85, deep-set sash windows with painted frames; cornices and fire escapes catch the last warm light.</p></div></div>
       <div class="mat"><div class="chip-vis" style="background: linear-gradient(105deg, #EFD6A4, #B99666);"></div><div class="body"><h3>Backlit limestone</h3><p>The landmark spire reads almost luminous — sun-facing faces near-blown, shadow faces hazed into the sky. Atmosphere does the modeling.</p></div></div>
       <div class="mat"><div class="chip-vis" style="background: linear-gradient(90deg, #7A5A3C, #42301F);"></div><div class="body"><h3>Water-tower timber</h3><p>Weathered cedar staves, steel hoops, conical cap; the classic rooftop silhouette and a favorite thing to blow up.</p></div></div>
-      <div class="mat"><div class="chip-vis" style="background: radial-gradient(circle at 38% 30%, #4A423A, #15100C 75%);"></div><div class="body"><h3>Gorilla fur</h3><p>Full strand groom on Mac/high tiers, shell cards elsewhere; golden rim light tracing the back and crown is the scene's signature.</p></div></div>
+      <div class="mat"><div class="chip-vis" style="background: radial-gradient(circle at 38% 30%, #4A423A, #15100C 75%);"></div><div class="body"><h3>Gorilla fur &amp; skin</h3><p>The Meshy Polygonal Gorilla base, retopologized and dressed in 4K PBR maps — baked fur-clump normals, shell-fur shader (8–16 shells by tier), subsurface muzzle and palms. Rim light tracing the back is the signature.</p></div></div>
       <div class="mat"><div class="chip-vis" style="background: linear-gradient(120deg, #FFE9A4, #C68F17);"></div><div class="body"><h3>Banana wax</h3><p>Waxy subsurface warmth with a clearcoat highlight tracking the spin — the most-watched object in the game gets the most expensive shader, in every weather.</p></div></div>
       <div class="mat"><div class="chip-vis" style="background: linear-gradient(180deg, #46525F 0%, #C0A47E 60%, #EDC584 100%);"></div><div class="body"><h3>Light itself</h3><p>One physically-driven sky rig, nine states: sun position from the round's clock time, cloud deck density from the condition, tungsten windows rising as light falls. Explosions punch holes in whatever calm the sky chose.</p></div></div>
     </div>
@@ -971,7 +971,7 @@ y = v·sinθ·t − ½g·t²</pre>
           <svg viewBox="0 0 160 100" style="position:absolute; inset:0; width:100%; height:100%;" aria-hidden="true"><rect x="6" y="52" width="26" height="48" fill="#3C2820"/><rect x="40" y="68" width="22" height="32" fill="#8A7158"/><rect x="68" y="38" width="9" height="48" fill="#DDBC85"/><polygon points="70.5,38 74.5,38 72.5,26" fill="#D3B586"/><rect x="86" y="64" width="24" height="36" fill="#75604A"/><rect x="118" y="54" width="30" height="46" fill="#31211A"/><g fill="#FFFFFF"><circle cx="24" cy="46" r="1.1"/><circle cx="44" cy="34" r="1.2"/><circle cx="66" cy="26" r="1.3"/><circle cx="90" cy="23" r="1.4"/><circle cx="114" cy="26" r="1.4"/><circle cx="134" cy="34" r="1.3"/></g></svg>
         </div>
         <p class="os">macOS · NATIVE</p><h3>Mac</h3>
-        <p>Keyboard-first, exactly like 1991: type the angle, Tab, type the power, Return to throw. Scroll wheel fine-tunes. Full groom fur tier.</p>
+        <p>Keyboard-first, exactly like 1991: type the angle, Tab, type the power, Return to throw. Scroll wheel fine-tunes. Highest fur-shell tier.</p>
       </div>
       <div class="plat">
         <div class="frame" style="aspect-ratio: 16/9;">
@@ -984,10 +984,39 @@ y = v·sinθ·t − ½g·t²</pre>
   </div>
 </section>
 
+<!-- ================= ENGINE & PIPELINE ================= -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">07 · Engine &amp; asset pipeline</p>
+    <h2 class="section-title">Godot 4, one gorilla, five clips</h2>
+    <p class="lede">Built on <a href="https://godotengine.org">Godot Engine 4</a> — Forward+ with the native Metal backend on Apple platforms, the weather system as a sky-shader rig, and our deterministic integrator untouched (Godot renders the banana; it never simulates it). The hero characters start from one licensed base mesh, textured realistically and fully animated.</p>
+
+    <div class="col2">
+      <div>
+        <h3 class="subhead">Engine decisions</h3>
+        <p class="prose">GDScript for flow and UI; the simulation core in a typed, engine-independent module so async matches and replays stay bit-exact. Game Center and StoreKit through Godot's Apple plugins, validated in the first milestone. iPhone, iPad, and Mac use official export templates; <b>tvOS has no official Godot export</b> — the community port gets an M0 spike, with an iPhone/iPad/Mac-first launch as the fallback plan.</p>
+      </div>
+      <div>
+        <h3 class="subhead">The base asset</h3>
+        <p class="prose">Meshy's <a href="https://www.meshy.ai/3d-models/Polygonal-Gorilla-019f8b52-7ff1-71db-aa57-97ee9de2e59c">Polygonal Gorilla</a> is the starting mesh for both characters. Its strong, faceted shape-reads are kept where they help the silhouette and smoothed only where deformation demands it — then it's textured photoreal. <b>License terms verified against the plan tier before production.</b></p>
+      </div>
+    </div>
+
+    <h3 class="subhead" style="margin-top: 40px;">Pipeline — base mesh to game</h3>
+    <div class="anim-beats">
+      <div class="beat"><span class="b-name">1 · Base mesh</span><span class="b-t">Meshy</span><p>Polygonal Gorilla exported as GLB; weld/manifold cleanup pass.</p></div>
+      <div class="beat"><span class="b-name">2 · Retopo &amp; UV</span><span class="b-t">Blender</span><p>Quad retopo to ~15–25k tris (LOD0) plus two LODs; clean UV atlas; deformation loops at shoulders, hips, jaw.</p></div>
+      <div class="beat"><span class="b-name">3 · Realistic texturing</span><span class="b-t">4K PBR</span><p>Albedo, normals baked from a sculpted detail pass (fur clumps, skin folds, knuckle callus), roughness, AO, subsurface masks for muzzle/ears/palms. Wet-fur and snow-dust are shader parameters driven by the weather system.</p></div>
+      <div class="beat"><span class="b-name">4 · Rig &amp; animate</span><span class="b-t">Blender</span><p>Custom control rig (IK limbs, spine, jaw, brow). Clip set: idle, windup-throw with an additive aim layer tracking the ANGLE meter, near-miss flinch, defeat, 3-loop victory dance.</p></div>
+      <div class="beat"><span class="b-name">5 · Godot import</span><span class="b-t">GLB</span><p>AnimationTree state machine + blend spaces; shell-fur shader tiered 8–16 shells by device. Kilo and Newton share the mesh with yellow/cyan material accents and offset animation timing so they never move in sync.</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= BRAND ================= -->
 <section>
   <div class="wrap">
-    <p class="eyebrow">07 · Name &amp; brand</p>
+    <p class="eyebrow">08 · Name &amp; brand</p>
     <h2 class="section-title">Calling it Bananarc</h2>
     <p class="lede">"Gorillas" itself is a trademark minefield (an active delivery brand, Donkey Kong adjacency). The invented word <b>Bananarc</b> names the projectile and the physics in one breath — ownable, searchable, and it looks great mid-flight.</p>
 

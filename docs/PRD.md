@@ -332,11 +332,13 @@ gesture-only inputs); see §13.
   the photoreal skies themselves stay clean.
 - **Gorillas:** two hero characters, **Kilo** (left, signal-yellow accents)
   and **Newton** (right, signal-cyan accents), matching the HUD's Power and
-  Angle colors. Photoreal builds who **throw bananas bare-handed** from a
-  powerful standing windup — no weapons. Full strand-groom fur on
-  Mac/high-tier devices, baked shell cards elsewhere; fur and rim light
-  respond to the active weather (golden rim at sunset, wet matting in rain,
-  snow dusting in winter rounds). Animation set: idle sway + knuckle taps,
+  Angle colors. Built from the Meshy "Polygonal Gorilla" base mesh,
+  realistically textured and fully animated (pipeline in §12): 4K PBR skin
+  and fur maps over the retopologized base, shell-fur shading tiered by
+  device, subsurface on muzzle and palms. They **throw bananas bare-handed**
+  from a powerful standing windup — no weapons. Fur and rim light respond
+  to the active weather (golden rim at sunset, wet matting in rain, snow
+  dusting in winter rounds). Animation set: idle sway + knuckle taps,
   windup-throw with full weight shift, duck/flinch on near-miss, defeat
   ragdoll-to-sit, and the sacred **chest-beat victory dance** —
   motion-designed, 3 escalating loops.
@@ -383,22 +385,67 @@ Full art direction with mockups: `mockup/index.html`.
 
 ## 12. Technical approach
 
-- **Language/stack:** Swift + SwiftUI shell; game scene in **SceneKit**
-  (ships on all four target platforms today) rendering 3D assets with a
-  fixed side camera. Custom deterministic physics (§6.2) — SceneKit is
-  renderer only. Re-evaluate RealityKit once tvOS parity is proven; Unity
-  ruled out to keep binary small, launch fast, and feel native.
-- **Determinism:** integer-seeded PRNG for city/wind; fixed-timestep
-  integrator; throw = `{matchSeed, roundIndex, angle, velocity}` → identical
-  replay everywhere (enables async MP, replays, Daily Skyline).
+### Engine: Godot 4
+
+The game is built on **Godot Engine** (<https://godotengine.org>),
+Godot 4.x:
+
+- **Rendering:** Forward+ with the native **Metal** rendering backend on
+  Apple platforms (Godot 4.4+); one 3D scene, fixed side-on camera; the
+  weather system (§9) implemented as a `WorldEnvironment` + sky-shader rig
+  driven by the round's condition and clock time.
+- **Language:** GDScript for game/UI flow; the deterministic simulation
+  core (below) in a typed, engine-independent module (GDScript with typed
+  arrays or C# — decide in M0) so replays never touch engine physics.
+- **Determinism:** unchanged from prior spec — integer-seeded PRNG for
+  city/wind/weather; fixed-timestep integrator; throw =
+  `{matchSeed, roundIndex, angle, power}` → identical replay everywhere
+  (enables async MP, replays, Daily Skyline). **Godot's physics engine is
+  not used for the banana** — it renders what our integrator computes.
 - **Destruction:** SDF texture per skyline; crater = sphere subtraction;
-  mesh chunks are cosmetic, gameplay collision reads the SDF.
-- **Services:** Game Center (turn-based matches, leaderboards, achievements),
-  CloudKit (profile/stat sync), StoreKit 2 (paid app; future cosmetic packs).
-- **No third-party SDKs. No analytics beyond opt-in, on-device-aggregated
-  basics.** Privacy nutrition label: "Data Not Collected." That's marketing.
+  mesh chunks are cosmetic, gameplay collision reads the SDF (compute
+  shader or CPU fallback).
+- **Apple services:** Game Center (turn-based matches, leaderboards,
+  achievements) and StoreKit via Godot iOS/macOS plugins
+  (godot-ios-plugins / GodotApplePlugins); iCloud key-value sync for
+  profiles/stats. Budget M0 time to validate plugin coverage on macOS.
+- **Exports:** official Godot export templates for iOS (iPhone/iPad) and
+  macOS. **tvOS is not an official Godot export target** — see Risks §15;
+  plan A is the community tvOS port validated in M0, plan B ships
+  iPhone/iPad/Mac at launch with Apple TV following.
+- **No third-party analytics SDKs; no tracking.** Privacy nutrition label:
+  "Data Not Collected." That's marketing.
 - **Performance budget:** < 400 MB install; < 3 s cold launch to title;
   60 fps floor during explosions on A14.
+
+### Gorilla asset pipeline
+
+The gorillas are built from a licensed base mesh, textured realistically
+and fully animated:
+
+1. **Base mesh:** Meshy "Polygonal Gorilla"
+   (<https://www.meshy.ai/3d-models/Polygonal-Gorilla-019f8b52-7ff1-71db-aa57-97ee9de2e59c>),
+   exported as GLB/FBX. Verify the Meshy plan's commercial-license terms
+   before production (open question §17).
+2. **Cleanup & retopo (Blender):** weld/manifold pass, quad retopo to a
+   game budget (~15–25k tris LOD0, plus LOD1/LOD2), clean UV atlas. The
+   faceted silhouette is smoothed only where deformation needs it
+   (shoulders, hips); the model's strong shape reads are kept.
+3. **Realistic texturing:** 4K PBR set — albedo, normal (baked from a
+   sculpted detail pass: fur clumps, skin folds, knuckle callus), roughness,
+   AO — with subsurface maps for muzzle, ears, palms. Fur rendered as
+   **shell-fur shader** in Godot (8–16 shells by device tier) plus
+   fin cards on the silhouette; wet/snow variants are shader parameters
+   driven by the weather system, not extra textures.
+4. **Rig & animation (Blender):** custom control rig (IK arms/legs, spine,
+   jaw, brow), skinned and exported as one GLB with the full clip set from
+   §9: idle loop, windup-throw (angle-tracking via an additive aim layer),
+   near-miss flinch, defeat, 3-loop victory dance, plus turn-face and
+   emote hooks. Root-motion-free; all clips loop- or tail-clean.
+5. **Godot import:** GLB → `AnimationTree` (state machine + blend spaces);
+   Kilo and Newton share the mesh with per-character material tint
+   (yellow/cyan accents) and animation timing offsets so they never move
+   in sync.
 
 ---
 
@@ -433,7 +480,9 @@ Full art direction with mockups: `mockup/index.html`.
 | Physics feels "off" vs. memory | Golden-file tests replaying known original throws; beta with Gorillas veterans; keep constants exactly per §2 |
 | Two-number input feels dated to newcomers | Slingshot drag maps to the same two numbers; overlay makes them meaningful; Practice Range onboards |
 | tvOS input precision | Discrete steppers + detents; oversized readouts; tested at 10-foot distance |
-| SceneKit longevity | Renderer abstraction layer; physics/game state fully engine-independent |
+| **Godot has no official tvOS export** | Validate the community tvOS port in M0; if not production-ready, launch iPhone/iPad/Mac first and ship Apple TV in a fast-follow. Simulation core is engine-independent either way |
+| Godot Apple-services plugin coverage (Game Center turn-based, StoreKit, iCloud on macOS) | M0 spike on godot-ios-plugins / GodotApplePlugins; fall back to a thin native plugin we write ourselves — the API surface we need is small |
+| Meshy base-mesh license terms | Confirm the account's plan grants commercial use of the Polygonal Gorilla asset before production; budget a from-scratch sculpt as fallback (the retopo/texture/rig pipeline is identical) |
 | Async MP cheating (client-authoritative) | Determinism means opponent's device re-simulates every throw; divergence = flag |
 
 ---
@@ -442,7 +491,7 @@ Full art direction with mockups: `mockup/index.html`.
 
 | Phase | Duration | Exit criteria |
 |---|---|---|
-| **M0 Prototype** | 4 wks | Grey-box: classic physics + typed input + destruction on iPhone; feel sign-off vs. original side-by-side |
+| **M0 Prototype** | 4 wks | Godot grey-box: classic physics + typed input + destruction on iPhone; feel sign-off vs. original side-by-side; spikes on tvOS community export and Game Center/StoreKit plugins; Meshy license confirmed |
 | **M1 Vertical slice** | 8 wks | One polished city, final gorillas + animation set, overlay v1, hot-seat mode, haptics/sound pass |
 | **M2 Feature complete** | 8 wks | All modes, 4 platforms, Game Center, accessibility pass |
 | **M3 Polish & beta** | 6 wks | TestFlight (incl. Gorillas-veteran cohort), perf budget met, localization (EN/DE/FR/ES/JA/PT) |
@@ -452,6 +501,9 @@ Full art direction with mockups: `mockup/index.html`.
 
 ## 17. Open questions
 
+0. Meshy asset license: confirm commercial-use rights for the Polygonal
+   Gorilla base mesh under the account's plan tier; record the license in
+   the repo before any store submission.
 1. Final name clearance (legal search on Bananarc + shortlist, `BRAND.md`).
 2. Round timer default for hot-seat — playtest banter vs. pace.
 3. Do craters persist across *rounds* within a match (original: new city per
