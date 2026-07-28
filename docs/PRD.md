@@ -281,22 +281,35 @@ gesture-only inputs); see §13.
   so 3D buildings read as 3D without breaking the classic silhouette).
   Slight parallax on background layers; gentle push-in on resolution moments
   only.
-- **Skyline:** procedural per §2 rules. Buildings are simple extruded volumes
-  with EGA-derived facade materials (teal glass, brick red, concrete gray),
-  window grids with warm lit/unlit variation that twinkles over the match.
+- **Rendering target:** photoreal. Physically-based, scan-derived materials;
+  one cool moon key light (~4,100 K) against thousands of warm tungsten
+  window fills (~2,700 K) and sodium haze at the horizon; filmic tone curve,
+  gentle vignette, fine film grain. Every hue is *graded from* the original
+  EGA screen (DOS blue → night air, EGA teal → curtain-wall glass, EGA red →
+  weathered brick) so a squint still reads as 1991.
+- **Skyline:** procedural per §2 rules. Buildings are fully modeled volumes —
+  teal glass towers (roughness ~0.08, HDRI reflections), normal-mapped brick,
+  stained concrete — with rooftop detail (AC units, antennas with beacon
+  lights, parapets) and window grids whose lit/unlit mix twinkles over the
+  match. A hazy distant-skyline layer provides atmospheric depth.
 - **Destruction:** volumetric chunk removal with persistent craters exposing
   interior floors (desks, a sad water cooler — one readable gag per interior,
   never noisy).
-- **Backdrop:** deep DOS-blue night sky gradient, stars, moon; the
-  **sun** (with its face) sits top-center and reacts: shocked when
-  overflown, squints at explosions, naps during long aim phases.
-- **Time/weather variants (cosmetic unlocks):** Classic Night (default,
-  DOS blue), Dusk (blue→magenta), CGA Dream (cyan/magenta stylized).
+- **Backdrop:** photoreal night sky graded from DOS blue — stars, a haloed
+  moon, city light pollution. The **sun (Sol)** is the one deliberately
+  stylized actor: a photoreal sun with a face would be unsettling, so Sol
+  keeps a cartoon face but is lit and haloed to sit naturally in the sky —
+  shocked when overflown, squints at explosions, naps during long aim phases.
+- **Time/weather variants (cosmetic unlocks):** Classic Night (default),
+  Dusk (blue→magenta), CGA Dream (a stylized cyan/magenta grade — the one
+  non-photoreal skin, as a wink).
 - **Gorillas:** two hero characters, **Kilo** (left, teal scarf) and
-  **Newton** (right, red scarf). Realistic-ish fur and weight, cartoon
-  proportions ~20% exaggerated. Animation set: idle sway + knuckle taps,
-  windup/throw (full weight shift), duck/flinch on near-miss, defeat
-  ragdoll-to-sit, and the sacred **chest-beat victory dance** —
+  **Newton** (right, red scarf). High-fidelity fur — full strand groom on
+  Mac/high-tier devices, baked shell cards on lower tiers — anisotropic
+  sheen, wind-reactive guard hairs, cool moonlit rim light; realistic weight
+  with proportions only gently exaggerated. Animation set: idle sway +
+  knuckle taps, windup/throw (full weight shift), duck/flinch on near-miss,
+  defeat ragdoll-to-sit, and the sacred **chest-beat victory dance** —
   motion-designed, 3 escalating loops.
 
 Full art direction with mockups: `mockup/index.html`.

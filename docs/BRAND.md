@@ -34,13 +34,20 @@ without the name being on the box.
 - **App icon:** DOS-blue field, single banana at 45° with a dotted arc and a
   crescent of teal skyline in the lower corner. No gorilla on the icon —
   the banana is the brand.
-- **Color (EGA-derived, modernized):**
-  - `#1424C8` DOS Blue — sky, brand field
-  - `#FFD23F` Banana — primary accent, CTAs
-  - `#17B9B4` Teal — Kilo / player 1, building glass
-  - `#C6392F` Brick — Newton / player 2, building brick
-  - `#FFE9A8` Window Glow — warm lights, highlights
-  - `#060B2E` Midnight — ground/ink
+- **Color:** two tiers, both descended from the EGA screen.
+  *Brand & UI accents (vivid):*
+  - `#F5C842` Banana — primary accent, CTAs
+  - `#1FB5AC` Teal — Kilo / player 1
+  - `#C6392F` Brick — Newton / player 2
+  - `#05070F` Midnight — ground/ink
+  *In-game world (photoreal grade):*
+  - `#0B1526` Night Air (from EGA `#0000A8`)
+  - `#1E5854` Teal Glass (from `#00A8A8`)
+  - `#6E362C` Weathered Brick (from `#A80000`)
+  - `#57616F` Concrete (from `#A8A8A8`)
+  - `#FFB35C` Tungsten Window (from `#FFFFFF`)
+  The crisp vivid accents live in the UI overlay floating *above* the
+  photoreal world — never dressed into it.
 - **Voice:** deadpan sports-commentary warmth. Short sentences. Physics
   terms used correctly and casually ("Apex: 41 m. Wind ate 9 of them.").
   Never zany, never corporate.
