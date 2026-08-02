@@ -95,11 +95,17 @@ jobs:
         run: |
           # Decode a base64 secret robustly: strip all whitespace first (a
           # copy-pasted value often carries line breaks), and fail with the
-          # secret's NAME if it still doesn't decode.
+          # secret's NAME if it still doesn't decode. The if-form keeps
+          # `bash -e` from killing the step before the message prints.
           decode_secret() {
-            printf '%s' "$2" | tr -d ' \t\n\r' | base64 --decode > "$3" 2>/dev/null
-            if [ ! -s "$3" ]; then
-              echo "::error::Secret $1 is not valid base64. Re-copy it with: base64 -i <file> | pbcopy  and paste it again."
+            local name="$1" value="$2" out="$3" cleaned len
+            cleaned=$(printf '%s' "$value" | tr -d ' \t\n\r')
+            len=${#cleaned}
+            if printf '%s' "$cleaned" | base64 --decode > "$out" 2>/dev/null \
+                && [ -s "$out" ]; then
+              echo "$name decoded OK ($len base64 chars)"
+            else
+              echo "::error::Secret $name is not valid base64 (length $len after removing whitespace). Open the secret on GitHub, click Update, re-copy the value with:  base64 -i <file> | pbcopy  and paste it fresh."
               exit 1
             fi
           }
