@@ -93,20 +93,33 @@ jobs:
           APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
         run: |
+          # Decode a base64 secret robustly: strip all whitespace first (a
+          # copy-pasted value often carries line breaks), and fail with the
+          # secret's NAME if it still doesn't decode.
+          decode_secret() {
+            printf '%s' "$2" | tr -d ' \t\n\r' | base64 --decode > "$3" 2>/dev/null
+            if [ ! -s "$3" ]; then
+              echo "::error::Secret $1 is not valid base64. Re-copy it with: base64 -i <file> | pbcopy  and paste it again."
+              exit 1
+            fi
+          }
           KEYCHAIN=/tmp/build.keychain-db
           KEYCHAIN_PASS=$(uuidgen)
           security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
           security set-keychain-settings -lut 3600 "$KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
-          echo "$APPLE_CERT_P12_BASE64" | base64 --decode > /tmp/dist.p12
-          security import /tmp/dist.p12 -k "$KEYCHAIN" \
-            -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign
+          decode_secret APPLE_CERT_P12_BASE64 "$APPLE_CERT_P12_BASE64" /tmp/dist.p12
+          if ! security import /tmp/dist.p12 -k "$KEYCHAIN" \
+              -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign; then
+            echo "::error::Could not import the certificate. Either APPLE_CERT_P12_BASE64 is not the exported .p12, or APPLE_CERT_PASSWORD does not match its export password."
+            exit 1
+          fi
           security set-key-partition-list -S apple-tool:,apple: \
             -k "$KEYCHAIN_PASS" "$KEYCHAIN" > /dev/null
           security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode \
-            > "$HOME/Library/MobileDevice/Provisioning Profiles/bananarc.mobileprovision"
+          decode_secret IOS_PROVISIONING_PROFILE_BASE64 "$IOS_PROVISIONING_PROFILE_BASE64" \
+            "$HOME/Library/MobileDevice/Provisioning Profiles/bananarc.mobileprovision"
 
       - name: Archive with xcodebuild
         env:
@@ -152,8 +165,17 @@ jobs:
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
         run: |
           python3 - <<'EOF'
-          import base64, json, os
-          key = base64.b64decode(os.environ["ASC_KEY_P8_BASE64"]).decode()
+          import base64, json, os, re, sys
+          raw = re.sub(r"\s+", "", os.environ["ASC_KEY_P8_BASE64"])
+          try:
+              key = base64.b64decode(raw, validate=True).decode()
+          except Exception:
+              print("::error::Secret ASC_KEY_P8_BASE64 is not valid base64. "
+                    "Re-copy it with: base64 -i AuthKey_XXXX.p8 | pbcopy")
+              sys.exit(1)
+          if "BEGIN PRIVATE KEY" not in key:
+              print("::error::ASC_KEY_P8_BASE64 decoded, but does not look like a .p8 key file.")
+              sys.exit(1)
           json.dump({
               "key_id": os.environ["ASC_KEY_ID"],
               "issuer_id": os.environ["ASC_ISSUER_ID"],
