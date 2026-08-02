@@ -115,8 +115,11 @@ jobs:
           security set-keychain-settings -lut 3600 "$KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
           decode_secret APPLE_CERT_P12_BASE64 "$APPLE_CERT_P12_BASE64" /tmp/dist.p12
+          # A pasted password often carries an invisible trailing newline;
+          # strip line breaks (never legitimate in a password) before use.
+          CERT_PASS=$(printf '%s' "$APPLE_CERT_PASSWORD" | tr -d '\n\r')
           if ! security import /tmp/dist.p12 -k "$KEYCHAIN" \
-              -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign; then
+              -P "$CERT_PASS" -T /usr/bin/codesign; then
             echo "::error::Could not import the certificate. Either APPLE_CERT_P12_BASE64 is not the exported .p12, or APPLE_CERT_PASSWORD does not match its export password."
             exit 1
           fi
