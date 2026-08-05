@@ -1,0 +1,158 @@
+name: iOS TestFlight (native)
+
+# Builds the NATIVE Swift app for iPhone/iPad, signs it, uploads to
+# TestFlight. Uses the SAME nine secrets as the Godot-era iOS workflow —
+# the provisioning profile is bound to the bundle ID, not the engine.
+# Build numbers are offset by 1000 to avoid colliding with builds already
+# uploaded by the Godot workflow.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["native-v*"]
+
+jobs:
+  build-and-upload:
+    name: Build, sign, upload native iOS
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preflight — check required secrets
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          missing=0
+          for v in APPLE_TEAM_ID IOS_BUNDLE_ID APPLE_CERT_P12_BASE64 \
+                   APPLE_CERT_PASSWORD IOS_PROVISIONING_PROFILE_BASE64 \
+                   IOS_PROFILE_NAME ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64; do
+            if [ -z "${!v}" ]; then
+              echo "::error::Missing repository secret: $v (see docs/DEPLOY.md)"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        env:
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+        run: |
+          sed -i '' "s/com.coffeykevin.bananarc/${IOS_BUNDLE_ID}/g" apple/project.yml
+          sed -i '' "s/CURRENT_PROJECT_VERSION: 1/CURRENT_PROJECT_VERSION: $((1000 + GITHUB_RUN_NUMBER))/" apple/project.yml
+          xcodegen -s apple/project.yml -p apple
+
+      - name: Set up signing keychain
+        env:
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          decode_secret() {
+            local name="$1" value="$2" out="$3" cleaned len
+            cleaned=$(printf '%s' "$value" | tr -d ' \t\n\r')
+            len=${#cleaned}
+            if printf '%s' "$cleaned" | base64 --decode > "$out" 2>/dev/null \
+                && [ -s "$out" ]; then
+              echo "$name decoded OK ($len base64 chars)"
+            else
+              echo "::error::Secret $name is not valid base64 (length $len). Re-copy with: base64 -i <file> | pbcopy"
+              exit 1
+            fi
+          }
+          KEYCHAIN=/tmp/build.keychain-db
+          KEYCHAIN_PASS=$(uuidgen)
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          security set-keychain-settings -lut 3600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          decode_secret APPLE_CERT_P12_BASE64 "$APPLE_CERT_P12_BASE64" /tmp/dist.p12
+          CERT_PASS=$(printf '%s' "$APPLE_CERT_PASSWORD" | tr -d '\n\r')
+          if ! security import /tmp/dist.p12 -k "$KEYCHAIN" \
+              -P "$CERT_PASS" -T /usr/bin/codesign; then
+            echo "::error::Could not import the certificate — check APPLE_CERT_P12_BASE64 / APPLE_CERT_PASSWORD."
+            exit 1
+          fi
+          security set-key-partition-list -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASS" "$KEYCHAIN" > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          decode_secret IOS_PROVISIONING_PROFILE_BASE64 "$IOS_PROVISIONING_PROFILE_BASE64" \
+            "$HOME/Library/MobileDevice/Provisioning Profiles/bananarc-native.mobileprovision"
+
+      - name: Archive iOS app
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+        run: |
+          xcodebuild archive \
+            -project apple/Bananarc.xcodeproj \
+            -scheme Bananarc-iOS \
+            -configuration Release \
+            -archivePath build/Bananarc-iOS.xcarchive \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$IOS_PROFILE_NAME"
+
+      - name: Export signed IPA
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+        run: |
+          sed -e "s/__TEAM_ID__/${APPLE_TEAM_ID}/" \
+              -e "s/__BUNDLE_ID__/${IOS_BUNDLE_ID}/" \
+              -e "s/__PROFILE_NAME__/${IOS_PROFILE_NAME}/" \
+              deploy/exportOptions.template.plist > /tmp/exportOptions.plist
+          xcodebuild -exportArchive \
+            -archivePath build/Bananarc-iOS.xcarchive \
+            -exportOptionsPlist /tmp/exportOptions.plist \
+            -exportPath build/out
+          ls -la build/out
+
+      - name: Upload to TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          python3 - <<'EOF'
+          import base64, json, os, re, sys
+          raw = re.sub(r"\s+", "", os.environ["ASC_KEY_P8_BASE64"])
+          try:
+              key = base64.b64decode(raw, validate=True).decode()
+          except Exception:
+              print("::error::Secret ASC_KEY_P8_BASE64 is not valid base64.")
+              sys.exit(1)
+          json.dump({
+              "key_id": os.environ["ASC_KEY_ID"],
+              "issuer_id": os.environ["ASC_ISSUER_ID"],
+              "key": key,
+              "in_house": False,
+          }, open("/tmp/asc_key.json", "w"))
+          EOF
+          IPA=$(find build/out -name "*.ipa" | head -1)
+          echo "Uploading: $IPA"
+          fastlane pilot upload \
+            --ipa "$IPA" \
+            --api_key_path /tmp/asc_key.json \
+            --skip_waiting_for_build_processing true
+
+      - name: Upload IPA as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bananarc-iOS-native
+          path: build/out/*.ipa
+          retention-days: 14
