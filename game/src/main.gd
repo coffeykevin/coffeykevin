@@ -17,6 +17,7 @@ const GORILLA_RADIUS := 2.2
 var state: int = State.TITLE
 var vs_ai := false
 var autotest := false
+var ui_test := false
 var shots_dir := ""
 var _snap_count := 0
 var _snap_timer := 0.0
@@ -96,7 +97,11 @@ func _ready() -> void:
 	hud.rematch.connect(_on_rematch)
 
 	shots_dir = OS.get_environment("BANANARC_SHOTS")
-	if autotest or shots_dir != "":
+	ui_test = OS.get_environment("BANANARC_UI_TEST") == "1"
+	if ui_test:
+		hud.show_title(true)
+		_ui_test.call_deferred()
+	elif autotest or shots_dir != "":
 		Engine.time_scale = 4.0 if shots_dir != "" else 12.0
 		print("[AUTOTEST] starting fixed-seed AI-vs-AI match")
 		_on_mode_picked.call_deferred(true)
@@ -170,6 +175,8 @@ func _begin_turn(msg: String) -> void:
 
 
 func _is_ai(p: int) -> bool:
+	if ui_test:
+		return false  # scripted human-path input drives both players
 	if autotest or shots_dir != "":
 		return true
 	return vs_ai and p == 1
@@ -314,6 +321,88 @@ func _nudge_aim(da: float, dp: float) -> void:
 	_refresh_aim_visuals()
 
 
+## Scripted player test (BANANARC_UI_TEST=1): drives the app like a human —
+## title screen, mode button, HUD aiming, real ui_accept input events —
+## asserting each state transition and saving screenshots. Exits 0/1.
+func _ui_check(cond: bool, what: String) -> bool:
+	print("[UITEST] %s: %s" % ["PASS" if cond else "FAIL", what])
+	return cond
+
+
+func _ui_snap(label: String) -> void:
+	if shots_dir == "":
+		return
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	img.save_png("%s/ui_%s.png" % [shots_dir, label])
+
+
+func _ui_wait_state(target: int, timeout: float) -> bool:
+	var t := 0.0
+	while state != target and t < timeout:
+		await get_tree().create_timer(0.2).timeout
+		t += 0.2
+	return state == target
+
+
+func _ui_throw(angle: float, power: float) -> void:
+	hud.set_angle(angle)
+	hud.set_power(power)
+	aim[current] = {"angle": angle, "power": power}
+	_refresh_aim_visuals()
+	await get_tree().create_timer(0.3).timeout
+	var ev := InputEventAction.new()
+	ev.action = "ui_accept"
+	ev.pressed = true
+	Input.parse_input_event(ev)  # exercises the real input path
+
+
+func _ui_test() -> void:
+	var fails := 0
+	await get_tree().create_timer(1.0).timeout
+	if not _ui_check(hud.title_panel.visible, "title screen visible on launch"):
+		fails += 1
+	await _ui_snap("01_title")
+
+	hud.mode_picked.emit(false)  # the Hot-Seat button's signal
+	if not _ui_check(await _ui_wait_state(State.AIMING, 8.0),
+			"match starts and reaches AIMING after mode select"):
+		fails += 1
+	if not _ui_check(not hud.title_panel.visible, "title screen dismissed"):
+		fails += 1
+	if not _ui_check(city != null and city.gorilla_spots.size() == 2,
+			"city generated with two rooftops"):
+		fails += 1
+	await _ui_snap("02_aiming")
+
+	var thrower := current
+	await _ui_throw(55.0, 62.0)
+	if not _ui_check(await _ui_wait_state(State.FLYING, 3.0),
+			"ui_accept input launches the throw (FLYING)"):
+		fails += 1
+	await get_tree().create_timer(1.0).timeout
+	await _ui_snap("03_flight")
+	if not _ui_check(await _ui_wait_state(State.AIMING, 25.0),
+			"throw resolves and play returns to AIMING"):
+		fails += 1
+	if not _ui_check(throw_count == 1, "throw counter advanced"):
+		fails += 1
+	if not _ui_check(current != thrower or scores != [0, 0],
+			"turn passed to the other player (or round scored)"):
+		fails += 1
+	await _ui_snap("04_after_throw")
+
+	await _ui_throw(40.0, 75.0)
+	await _ui_wait_state(State.FLYING, 3.0)
+	if not _ui_check(await _ui_wait_state(State.AIMING, 25.0),
+			"second player's throw resolves"):
+		fails += 1
+	await _ui_snap("05_second_throw")
+
+	print("[UITEST] " + ("ALL PASS" if fails == 0 else "%d FAILURES" % fails))
+	get_tree().quit(1 if fails > 0 else 0)
+
+
 ## Screenshot capture mode (BANANARC_SHOTS=<dir>): AI-vs-AI match with a
 ## frame saved every few seconds of game time — used to review the build
 ## visually from a machine with no display attached.
@@ -328,7 +417,7 @@ func _do_snap() -> void:
 func _process(delta: float) -> void:
 	_cam_t += delta
 	_poll_controller(delta)
-	if shots_dir != "":
+	if shots_dir != "" and not ui_test:
 		_snap_timer += delta
 		if _snap_timer >= 5.0 and _snap_count < 36:
 			_snap_timer = 0.0
