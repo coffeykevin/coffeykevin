@@ -12,6 +12,26 @@ built on [Godot Engine 4.4](https://godotengine.org).
    godot --path game
    ```
 
+## Run it from Xcode (Mac / iPhone / Simulator)
+
+The Xcode project is *generated* from this Godot project. One-time setup:
+install Godot 4.4+, open it once, and download the export templates
+(Editor menu → Manage Export Templates → Download and Install). Then from
+the repo root:
+
+```sh
+./deploy/make-xcode-project.sh
+```
+
+It exports `build/xcode/Bananarc.xcodeproj` and opens it in Xcode. Tick
+**Automatically manage signing**, pick your team, and choose a run
+destination: a plugged-in **iPhone** (installs directly — no TestFlight
+needed for your own device), an iOS **Simulator**, or **My Mac (Designed
+for iPad)** to play on the Mac. Re-run the script after changing game
+code — the Xcode project is a build artifact, not the source of truth;
+day-to-day editing and the fastest run loop live in the Godot editor
+(press ▶).
+
 ## What's implemented
 
 | System | Status |
