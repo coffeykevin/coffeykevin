@@ -106,13 +106,28 @@ screenshots) rent real Apple silicon by the hour:
 Avoid Hackintosh/OSX-KVM images on generic VPSes — macOS licensing only
 permits Apple hardware, and every legitimate provider above is exactly that.
 
-## Apple TV
+## Apple TV — native (Swift port)
 
-TestFlight exists on tvOS, so once a tvOS build exists, deployment is the
-same shape as iOS: archive → upload → install from the TestFlight app on
-the Apple TV. The blocker is upstream of us (PRD §15): **Godot has no
-official tvOS export target**, so there is currently no native tvOS
-binary to upload.
+The game is being ported to native Swift (SceneKit + SwiftUI, one
+codebase, iOS/tvOS/macOS targets in `apple/`) precisely so Apple TV gets
+a real TestFlight build. The `tvOS TestFlight` workflow drives it and
+needs **two secrets beyond the iOS nine** (certificate and ASC API key
+are shared):
+
+| Secret | Value |
+|---|---|
+| `TVOS_PROVISIONING_PROFILE_BASE64` | portal → Profiles → + → **App Store Connect** → select **tvOS** → your App ID + distribution cert → download → `base64 -i <file>.mobileprovision \| pbcopy` |
+| `TVOS_PROFILE_NAME` | that profile's exact name, e.g. `Bananaarc TV AppStore` |
+
+One-time in App Store Connect: open your app → the platform **+** control
+→ add **tvOS** to the same app record (same bundle ID — it becomes one
+app with two platforms, and one purchase).
+
+Then: Actions → **tvOS TestFlight** → Run workflow. The build appears
+under the app's TestFlight → tvOS builds, and installs from the
+TestFlight app on the Apple TV itself.
+
+### The old Godot-era answer (still true for the Godot build)
 
 **Play on your Apple TV today — AirPlay.** The iOS TestFlight build gets
 you couch play immediately:

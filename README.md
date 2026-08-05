@@ -12,7 +12,8 @@ palette, and a physics overlay that visually explains every throw.
 | [`docs/PRD.md`](docs/PRD.md) | Comprehensive product requirements document |
 | [`docs/BRAND.md`](docs/BRAND.md) | Name shortlist, chosen brand, voice, colors |
 | [`mockup/index.html`](mockup/index.html) | High-fidelity mockup: gameplay frame, physics overlay, art direction boards, platform layouts, brand boards |
-| [`game/`](game/README.md) | **Playable Godot 4 vertical slice** — classic physics, procedural obstruction skylines, nine-sky weather with real lighting, destruction, hot-seat + AI |
+| [`apple/`](apple/) | **Native Swift port (active development)** — SceneKit + SwiftUI, one codebase targeting iOS, tvOS, and macOS, so every Apple platform including Apple TV gets a real TestFlight build. Sim core in `apple/Core` with the same deterministic tests |
+| [`game/`](game/README.md) | Playable Godot 4 vertical slice (reference implementation until the native port reaches parity) — classic physics, procedural obstruction skylines, nine-sky weather with real lighting, destruction, hot-seat + AI |
 
 ## The original
 
