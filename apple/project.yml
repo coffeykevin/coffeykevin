@@ -1,0 +1,68 @@
+# XcodeGen spec — generates Bananarc.xcodeproj with iOS, tvOS, and macOS
+# targets sharing one source tree. Run:  xcodegen -s apple/project.yml
+name: Bananarc
+options:
+  bundleIdPrefix: com.coffeykevin
+  deploymentTarget:
+    iOS: "17.0"
+    tvOS: "17.0"
+    macOS: "14.0"
+
+packages:
+  BananarcCore:
+    path: Core
+
+settings:
+  base:
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+    SWIFT_VERSION: 5.9
+
+targets:
+  Bananarc-iOS:
+    type: application
+    platform: iOS
+    sources: [App]
+    dependencies:
+      - package: BananarcCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.coffeykevin.bananarc
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: Generated/Info-iOS.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          [UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        ITSAppUsesNonExemptEncryption: false
+        GCSupportsControllerUserInteraction: true
+
+  Bananarc-tvOS:
+    type: application
+    platform: tvOS
+    sources: [App]
+    dependencies:
+      - package: BananarcCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.coffeykevin.bananarc
+    info:
+      path: Generated/Info-tvOS.plist
+      properties:
+        ITSAppUsesNonExemptEncryption: false
+        GCSupportsControllerUserInteraction: true
+
+  Bananarc-macOS:
+    type: application
+    platform: macOS
+    sources: [App]
+    dependencies:
+      - package: BananarcCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.coffeykevin.bananarc
+    info:
+      path: Generated/Info-macOS.plist
+      properties:
+        ITSAppUsesNonExemptEncryption: false

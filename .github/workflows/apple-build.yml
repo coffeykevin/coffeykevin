@@ -1,0 +1,45 @@
+name: Apple native build check
+
+# Compile-checks the native Swift app for all three platforms (no signing,
+# no upload). Trigger manually, or push a branch named apple-build/* .
+# Costs macOS runner minutes (10x on private repos) — run deliberately.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["apple-build/**"]
+
+jobs:
+  build:
+    name: Build iOS + tvOS + macOS (unsigned)
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen -s apple/project.yml -p apple
+
+      - name: Build tvOS
+        run: |
+          xcodebuild build -project apple/Bananarc.xcodeproj \
+            -scheme Bananarc-tvOS -destination 'generic/platform=tvOS' \
+            CODE_SIGNING_ALLOWED=NO | tail -20
+
+      - name: Build iOS
+        run: |
+          xcodebuild build -project apple/Bananarc.xcodeproj \
+            -scheme Bananarc-iOS -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO | tail -20
+
+      - name: Build macOS
+        run: |
+          xcodebuild build -project apple/Bananarc.xcodeproj \
+            -scheme Bananarc-macOS -destination 'generic/platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO | tail -20
+
+      - name: Core tests on macOS
+        run: swift test --package-path apple/Core | tail -10

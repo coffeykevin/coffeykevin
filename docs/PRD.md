@@ -411,7 +411,19 @@ Full art direction with mockups: `mockup/index.html`.
 
 ## 12. Technical approach
 
-### Engine: Godot 4
+> **Engine decision (Aug 2026): native Swift + SceneKit.** Apple TV via
+> TestFlight is a hard requirement, and the tvOS spike (§15) confirmed
+> Godot cannot target tvOS. The project is therefore ported to a native
+> Swift stack — SceneKit for the 3D scene, SwiftUI for the HUD, one
+> codebase with iOS, tvOS, and macOS targets — which ships on every Apple
+> platform with first-class TestFlight support. The deterministic
+> simulation core ports line-for-line into a pure Swift package
+> (`apple/Core`) with the same tests. The Godot implementation (`game/`)
+> remains in-repo as the playable reference until the native port reaches
+> feature parity, then retires. The section below documents the original
+> Godot approach for that reference.
+
+### Engine: Godot 4 (superseded — reference implementation)
 
 The game is built on **Godot Engine** (<https://godotengine.org>),
 Godot 4.x:
